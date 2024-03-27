@@ -32,6 +32,6 @@ $ ./image-edit -i input.png -o output.png -g
 
 ## PARAMETERS
 
--i: Input Image Path
--o: Output Image Path
--g: Gray Scale
+-i: Input Image Path  
+-o: Output Image Path  
+-g: Gray Scale  
