@@ -1,2 +1,4 @@
 image-edit
 *.png
+
+!examples/*.png
