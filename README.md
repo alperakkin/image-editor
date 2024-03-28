@@ -51,11 +51,11 @@ $ ./image-edit -i input.png -o output.png -c 1.2
 
 ## PARAMETERS
 
--i: Input Image Path
--o: Output Image Path
--g: Gray Scale
--c: Contrast
-
+-i: Input Image Path  
+-o: Output Image Path  
+-g: Gray Scale  
+-c: Contrast  
+  
 
 It is also possible to apply multi filters at once
 
