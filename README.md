@@ -49,13 +49,27 @@ $ ./image-edit -i input.png -o output.png -c 1.2
 
 ![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-contr.png)
 
+### Brightness
+To apply brightness to the desired image file, add following parameters
+
+```bash
+$ ./image-edit -i input.png -o output.png -b 1.2
+```
+#### Input
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle.png)
+
+#### Output
+
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-bright.png)
+
 ## PARAMETERS
 
 -i: Input Image Path  
 -o: Output Image Path  
 -g: Gray Scale  
 -c: Contrast  
-  
+-b: Brightness  
+
 
 It is also possible to apply multi filters at once
 

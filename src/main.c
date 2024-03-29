@@ -17,6 +17,7 @@ void help() {
     printf("-o: Save Image File\n");
     printf("-g: Set pixels to grayscale\n");
     printf("-c: Set contrast\n");
+    printf("-b: Set brightness\n");
 }
 
 
@@ -39,10 +40,12 @@ FunctionList parse_args(int argc, char *argv[])
 
     for(int i=1; i<argc; i++)
     {
+        if (strcmp(argv[i], "-h") == 0) help();
         if (strcmp(argv[i], "-i") == 0) input_path = argv[i+1];
         if (strcmp(argv[i], "-o") == 0) output_path = argv[i+1];
         if (strcmp(argv[i], "-g") == 0) push(&function_list, grayscale, NULL);
         if (strcmp(argv[i], "-c") == 0) push(&function_list, contrast, argv[i+1]);
+        if (strcmp(argv[i], "-b") == 0) push(&function_list, brightness, argv[i+1]);
 
     }
 
