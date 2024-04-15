@@ -1,3 +1,5 @@
+#include <float.h>
+
 struct Function {
     char* argument;
     void (*name)(char* argument);
@@ -130,6 +132,73 @@ void brightness(char* factor)
         }
     }
 
+
+}
+
+double** kernel_filter(int kernel_size, float sigma)
+{
+    double **kernel = (double **) malloc(kernel_size * sizeof(double));
+
+    for(int row=0; row<kernel_size; row++)
+    {
+        kernel[row] = (double *) malloc(kernel_size * sizeof(double));
+        for(int col=0; col<kernel_size; col++)
+        {
+            int dist_row =  abs(row - (int) (kernel_size / 2));
+            int dist_col =  abs(col - (int) (kernel_size / 2));
+
+            double sigma_squared = sigma * sigma;
+            double exponent = -((dist_row * dist_row + dist_col * dist_col) / (2.0 * sigma_squared));
+            double gauss_value = exp(exponent) / (2.0 * M_PI * sigma_squared);
+
+            kernel[row][col] =  gauss_value;
+
+        }
+
+    }
+
+    return kernel;
+
+}
+
+void gaussian_factors(char* args, double* factors)
+{
+    char *token;
+    int ind = 0;
+
+    token = strtok(args,"x");
+
+    while (token != NULL)
+    {
+        factors[ind++] = atof(token);
+        token = strtok(NULL, "x");
+    }
+
+}
+
+void gaussian(char* args)
+{
+
+    double factors[2];
+    int kernel_size;
+    float sigma;
+    gaussian_factors(args, factors);
+
+    kernel_size = factors[0];
+    sigma = factors[1];
+
+
+    double **kernel = kernel_filter(kernel_size, sigma);
+
+    for (int row=0; row<kernel_size; row++)
+    {
+        for (int col=0; col<kernel_size; col++)
+        {
+            printf("%f ", kernel[row][col]);
+
+        }
+        printf("\n");
+    }
 
 }
 

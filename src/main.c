@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #include "image.h"
 #include "editor.h"
@@ -18,6 +19,7 @@ void help() {
     printf("-g: Set pixels to grayscale\n");
     printf("-c: Set contrast\n");
     printf("-b: Set brightness\n");
+    printf("--gaussian: Set Gaussian Blur\n");
 }
 
 
@@ -46,6 +48,7 @@ FunctionList parse_args(int argc, char *argv[])
         if (strcmp(argv[i], "-g") == 0) push(&function_list, grayscale, NULL);
         if (strcmp(argv[i], "-c") == 0) push(&function_list, contrast, argv[i+1]);
         if (strcmp(argv[i], "-b") == 0) push(&function_list, brightness, argv[i+1]);
+        if (strcmp(argv[i], "--gaussian") == 0) push(&function_list, gaussian, argv[i+1]);
 
     }
 
