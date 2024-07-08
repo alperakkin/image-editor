@@ -62,13 +62,33 @@ $ ./image-edit -i input.png -o output.png -b 1.2
 
 ![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-bright.png)
 
+
+### Gaussian Blur
+To apply Gaussian Blur to the desired image file, add following parameters
+
+
+```bash
+$ ./image-edit -i examples/castle.png  --gaussian 50x1.4  -o examples/castle-gaussian.png
+```
+
+The --gaussian 50x1.4 parameter applies a Gaussian blur effect, where 50 specifies the size of the Gaussian kernel matrix (e.g., 50x50), and 1.4 indicates the standard deviation (sigma) of the Gaussian distribution.
+
+
+#### Input
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle.png)
+
+#### Output
+
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-gaussian.png)
+
 ## PARAMETERS
 
--i: Input Image Path  
--o: Output Image Path  
--g: Gray Scale  
--c: Contrast  
--b: Brightness  
+-i: Input Image Path
+-o: Output Image Path
+-g: Gray Scale
+-c: Contrast
+-b: Brightness
+--gaussian: Gaussian Blur
 
 
 It is also possible to apply multi filters at once
