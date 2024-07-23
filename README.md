@@ -83,12 +83,12 @@ The --gaussian 50x1.4 parameter applies a Gaussian blur effect, where 50 specifi
 
 ## PARAMETERS
 
--i: Input Image Path
--o: Output Image Path
--g: Gray Scale
--c: Contrast
--b: Brightness
---gaussian: Gaussian Blur
+-i: Input Image Path 
+-o: Output Image Path 
+-g: Gray Scale 
+-c: Contrast 
+-b: Brightness 
+--gaussian: Gaussian Blur 
 
 
 It is also possible to apply multi filters at once
