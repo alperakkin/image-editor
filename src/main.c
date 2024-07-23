@@ -20,6 +20,7 @@ void help() {
     printf("-c: Set contrast\n");
     printf("-b: Set brightness\n");
     printf("--gaussian: Set Gaussian Blur\n");
+    printf("-r: Resize Image\n");
 }
 
 
@@ -49,6 +50,7 @@ FunctionList parse_args(int argc, char *argv[])
         if (strcmp(argv[i], "-c") == 0) push(&function_list, contrast, argv[i+1]);
         if (strcmp(argv[i], "-b") == 0) push(&function_list, brightness, argv[i+1]);
         if (strcmp(argv[i], "--gaussian") == 0) push(&function_list, gaussian, argv[i+1]);
+        if (strcmp(argv[i], "-r") == 0) push(&function_list, resize, argv[i+1]);
 
     }
 
@@ -76,7 +78,7 @@ int main(int argc, char *argv[])
 
   read_png_file(input_path);
   process_functions(&functions);
-  write_png_file(output_path);
+  write_png_file(output_path, pixels, width, height);
 
   return 0;
 }

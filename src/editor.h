@@ -212,17 +212,17 @@ void apply_kernel(double**kernel, int KERNEL_SIZE)
 
 }
 
-void gaussian_factors(char* args, double* factors)
+void split_factors(char* args, double* factors, char seperator)
 {
     char *token;
     int ind = 0;
 
-    token = strtok(args,"x");
+    token = strtok(args, &seperator);
 
     while (token != NULL)
     {
         factors[ind++] = atof(token);
-        token = strtok(NULL, "x");
+        token = strtok(NULL, &seperator);
     }
 
 }
@@ -233,7 +233,7 @@ void gaussian(char* args)
     double factors[2];
     int KERNEL_SIZE;
     float sigma;
-    gaussian_factors(args, factors);
+    split_factors(args, factors, 'x');
 
     KERNEL_SIZE = factors[0];
     sigma = factors[1];
@@ -244,6 +244,23 @@ void gaussian(char* args)
     double **kernel = kernel_filter(KERNEL_SIZE, sigma);
     apply_kernel(kernel, KERNEL_SIZE);
 
+
+
+}
+
+void resize(char* args)
+{
+    double factors[2];
+    split_factors(args, factors, 'x');
+    int width = factors[0];
+    int height = factors[1];
+
+    png_bytep *new_image;
+
+    new_image = (png_bytep*)malloc(sizeof(png_bytep) * height);
+    // for(int y = 0; y < height; y++) {
+    //     new_image[y] = (png_byte*)malloc(png_get_rowbytes(png,info));
+    // }
 
 
 }

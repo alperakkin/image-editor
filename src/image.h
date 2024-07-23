@@ -70,7 +70,9 @@ void read_png_file(char *filename) {
   png_destroy_read_struct(&png, &info, NULL);
 }
 
-void write_png_file(char *filename) {
+void write_png_file(char *filename, png_bytep* image_data,
+                    int image_width, int image_height)
+{
   int y;
 
   FILE *fp = fopen(filename, "wb");
@@ -86,11 +88,10 @@ void write_png_file(char *filename) {
 
   png_init_io(png, fp);
 
-  // Output is 8bit depth, RGBA format.
   png_set_IHDR(
     png,
     info,
-    width, height,
+    image_width, image_height,
     8,
     PNG_COLOR_TYPE_RGBA,
     PNG_INTERLACE_NONE,
@@ -99,19 +100,15 @@ void write_png_file(char *filename) {
   );
   png_write_info(png, info);
 
-  // To remove the alpha channel for PNG_COLOR_TYPE_RGB format,
-  // Use png_set_filler().
-  //png_set_filler(png, 0, PNG_FILLER_AFTER);
+  if (!image_data) abort();
 
-  if (!pixels) abort();
-
-  png_write_image(png, pixels);
+  png_write_image(png, image_data);
   png_write_end(png, NULL);
 
-  for(int y = 0; y < height; y++) {
-    free(pixels[y]);
+  for(int y = 0; y < image_height; y++) {
+    free(image_data[y]);
   }
-  free(pixels);
+  free(image_data);
 
   fclose(fp);
 
