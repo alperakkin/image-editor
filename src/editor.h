@@ -252,15 +252,11 @@ void resize(char* args)
 {
     double factors[2];
     split_factors(args, factors, 'x');
-    int width = factors[0];
-    int height = factors[1];
+    int image_width = factors[0];
+    int image_height = factors[1];
 
-    png_bytep *new_image;
+    png_bytep *new_image = alloc_image(image_height, image_width);
 
-    new_image = (png_bytep*)malloc(sizeof(png_bytep) * height);
-    // for(int y = 0; y < height; y++) {
-    //     new_image[y] = (png_byte*)malloc(png_get_rowbytes(png,info));
-    // }
 
 
 }

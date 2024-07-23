@@ -70,6 +70,26 @@ void read_png_file(char *filename) {
   png_destroy_read_struct(&png, &info, NULL);
 }
 
+
+png_bytep* alloc_image(image_height, image_width){
+  png_bytep *new_image;
+
+  new_image = (png_bytep*)malloc(sizeof(png_bytep) * image_height);
+  for(int y = 0; y < image_height; y++) {
+        new_image[y] = (png_byte*)malloc(sizeof(png_byte) * image_width);
+  }
+  return new_image;
+}
+
+void free_image_data(png_bytep* image_data, int image_height)
+{
+  for(int y = 0; y < image_height; y++) {
+    free(image_data[y]);
+  }
+  free(image_data);
+
+}
+
 void write_png_file(char *filename, png_bytep* image_data,
                     int image_width, int image_height)
 {
@@ -105,10 +125,7 @@ void write_png_file(char *filename, png_bytep* image_data,
   png_write_image(png, image_data);
   png_write_end(png, NULL);
 
-  for(int y = 0; y < image_height; y++) {
-    free(image_data[y]);
-  }
-  free(image_data);
+  free_image_data(image_data, image_height);
 
   fclose(fp);
 
