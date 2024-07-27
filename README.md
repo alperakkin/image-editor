@@ -100,16 +100,16 @@ $ ./image-edit -i examples/castle.png  -r 128x128  -o examples/castle-resize.png
 
 ## PARAMETERS
 
--i: Input Image Path
--o: Output Image Path
--g: Gray Scale
--c: Contrast
--b: Brightness
---gaussian: Gaussian Blur
--r: Resize
+-i: Input Image Path  
+-o: Output Image Path  
+-g: Gray Scale  
+-c: Contrast  
+-b: Brightness  
+--gaussian: Gaussian Blur  
+-r: Resize  
 
 
-It is also possible to apply multi filters at once
+It is also possible to apply multi filters at once  
 
 ```bash
 $ ./image-edit -i input.png -o output.png  -g -c 1.2
