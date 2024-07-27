@@ -14,10 +14,10 @@ int main(int argc, char *argv[])
   {
     help();
     return 1;
-
   }
 
   FunctionList functions = parse_args(argc, argv);
+  if (functions.length==0) return 1;
 
   read_png_file(input_path);
   process_functions(&functions);
