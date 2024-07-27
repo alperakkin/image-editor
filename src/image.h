@@ -74,9 +74,10 @@ void read_png_file(char *filename) {
 png_bytep* alloc_image(image_height, image_width){
   png_bytep *new_image;
 
-  new_image = (png_bytep*)malloc(sizeof(png_bytep) * image_height);
+  new_image = (png_bytep*) malloc(sizeof(png_bytep) * image_height);
   for(int y = 0; y < image_height; y++) {
-        new_image[y] = (png_byte*)malloc(sizeof(png_byte) * image_width);
+        new_image[y] = (png_byte*) malloc(sizeof(png_byte) * image_width * 4 );
+
   }
   return new_image;
 }

@@ -1,5 +1,8 @@
 #include <float.h>
 
+char* input_path;
+char* output_path;
+
 struct Function {
     char* argument;
     void (*name)(char* argument);
@@ -29,6 +32,7 @@ void grayscale(){
             px[2] = avg;
     }
   }
+  write_png_file(output_path, pixels, width, height);
 }
 
 Intensity intensity()
@@ -94,6 +98,7 @@ void contrast(char* factor)
         }
     }
 
+    write_png_file(output_path, pixels, width, height);
 
 }
 
@@ -132,7 +137,7 @@ void brightness(char* factor)
         }
     }
 
-
+    write_png_file(output_path, pixels, width, height);
 }
 
 double** kernel_filter(int kernel_size, float sigma)
@@ -243,6 +248,7 @@ void gaussian(char* args)
 
     double **kernel = kernel_filter(KERNEL_SIZE, sigma);
     apply_kernel(kernel, KERNEL_SIZE);
+    write_png_file(output_path, pixels, width, height);
 
 
 
@@ -250,14 +256,45 @@ void gaussian(char* args)
 
 void resize(char* args)
 {
+
     double factors[2];
     split_factors(args, factors, 'x');
     int image_width = factors[0];
     int image_height = factors[1];
 
-    png_bytep *new_image = alloc_image(image_height, image_width);
+    png_bytep* new_image = alloc_image(image_height, image_width);
+
+    double x_scale = (double) width/image_width;
+    double y_scale = (double) height/image_height;
+
+    for (int i=0; i<image_height; i++){
+
+        for (int j=0; j<image_width; j++){
+
+            int row_val = (int) (i * y_scale);
+            int col_val = (int) (j * x_scale);
 
 
+            png_bytep px = &(pixels[row_val][col_val * 4]);
+
+            png_bytep px_n = &(new_image[i][j * 4]);
+
+
+            px_n[0] = px[0];  // R
+            px_n[1] = px[1];  // G
+            px_n[2] = px[2];  // B
+            px_n[3] = px[3];  // Alpha
+
+
+
+
+        }
+
+    }
+
+
+
+    write_png_file(output_path, new_image, image_width, image_height);
 
 }
 

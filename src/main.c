@@ -6,8 +6,7 @@
 #include "image.h"
 #include "editor.h"
 
-char* input_path;
-char* output_path;
+
 
 void help() {
     printf("------------- Help ---------------\n\n");
@@ -78,7 +77,8 @@ int main(int argc, char *argv[])
 
   read_png_file(input_path);
   process_functions(&functions);
-  write_png_file(output_path, pixels, width, height);
+
+
 
   return 0;
 }
