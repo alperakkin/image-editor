@@ -98,18 +98,35 @@ $ ./image-edit -i examples/castle.png  -r 128x128  -o examples/castle-resize.png
 
 ![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-resize.png)
 
+### Histogram
+To obtain the histogram distribution of the color channels of the desired image file, add the following parameters.
+
+
+```bash
+$ ./image-edit -i examples/castle.png  --histogram
+```
+
+
+
+#### Input
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle.png)
+
+#### Output
+
+![](https://github.com/alperakkin/image-editor/blob/main/examples/terminal-histogram.png)
+
 ## PARAMETERS
 
--i: Input Image Path  
--o: Output Image Path  
--g: Gray Scale  
--c: Contrast  
--b: Brightness  
---gaussian: Gaussian Blur  
--r: Resize  
+-i: Input Image Path
+-o: Output Image Path
+-g: Gray Scale
+-c: Contrast
+-b: Brightness
+--gaussian: Gaussian Blur
+-r: Resize
 
 
-It is also possible to apply multi filters at once  
+It is also possible to apply multi filters at once
 
 ```bash
 $ ./image-edit -i input.png -o output.png  -g -c 1.2

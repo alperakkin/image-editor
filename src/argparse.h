@@ -15,6 +15,7 @@ void help() {
     printf("-b: Set brightness\n");
     printf("--gaussian: Set Gaussian Blur\n");
     printf("-r: Resize Image\n");
+    printf("--histogram: Get Histogram Of Channels\n");
     printf("\n");
     printf("-------------------------------------------\n\n");
 }
@@ -51,6 +52,7 @@ FunctionList parse_args(int argc, char *argv[])
         if (strcmp(argv[i], "-b") == 0) push(&function_list, brightness, argv[i+1]);
         if (strcmp(argv[i], "--gaussian") == 0) push(&function_list, gaussian, argv[i+1]);
         if (strcmp(argv[i], "-r") == 0) push(&function_list, resize, argv[i+1]);
+        if (strcmp(argv[i], "--histogram") == 0) push(&function_list, histogram, NULL);
 
     }
 

@@ -1,9 +1,11 @@
 
 
+
 typedef struct {
     int min;
     int max;
 } Intensity;
+
 
 
 Intensity intensity()

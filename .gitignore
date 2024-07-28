@@ -1,4 +1,5 @@
 image-edit
 *.png
 
+.DS_Store
 !examples/*.png

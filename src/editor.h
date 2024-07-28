@@ -1,5 +1,5 @@
 #include <float.h>
-
+#include <stdlib.h>
 #include "utils.h"
 #include "helpers.h"
 
@@ -179,6 +179,81 @@ void resize(char* args)
 
 
     write_png_file(OUTPUT_PATH, new_image, image_width, image_height);
+
+}
+
+
+void histogram()
+{
+    ColorMode red = {
+        .name = "red",
+        .value = "31",
+        .min = 1000000,
+        .max = 0,
+        .histogram = {
+        0,0,0,0,0,
+        0,0,0,0,0,
+        0,0,0,0,0,
+        0,0,0,0,0,
+        0,0,0,0,0
+        }
+    };
+    ColorMode green = {
+        .name = "green",
+        .value = "32",
+        .min = 1000000,
+        .max = 0,
+        .histogram = {
+        0,0,0,0,0,
+        0,0,0,0,0,
+        0,0,0,0,0,
+        0,0,0,0,0,
+        0,0,0,0,0
+        }
+    };
+    ColorMode blue = {
+        .name = "blue",
+        .value = "34",
+        .min = 1000000,
+        .max = 0,
+        .histogram = {
+        0,0,0,0,0,
+        0,0,0,0,0,
+        0,0,0,0,0,
+        0,0,0,0,0,
+        0,0,0,0,0
+        }
+    };
+
+    for(int y = 0; y < height; y++)
+    {
+        png_bytep row = pixels[y];
+        for(int x = 0; x < width; x++)
+        {
+            png_bytep px = &(row[x * 4]);
+
+            int block = (int) 25*px[0]/255;
+            red.histogram[block]++;
+            block = (int) 25*px[1]/255;
+            green.histogram[block]++;
+            block = (int) 25*px[2]/255;
+            blue.histogram[block]++;
+
+
+            if (red.max < px[0]) red.max=px[0];
+            if (blue.max < px[1]) blue.max=px[1];
+            if (green.max < px[2]) green.max=px[2];
+
+            if (red.min > px[0]) red.min=px[0];
+            if (blue.min > px[1]) blue.min=px[1];
+            if (green.min > px[2]) green.min=px[2];
+
+        }
+    }
+
+
+    print_table(red, green, blue);
+
 
 }
 
