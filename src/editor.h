@@ -119,21 +119,20 @@ void brightness(char* factor)
 void gaussian(char* args)
 {
 
-    double factors[2];
+
     int KERNEL_SIZE;
     float sigma;
-    split_factors(args, factors, 'x');
+    Arg* arguments = split_args(args, 2, 'x');
 
-    KERNEL_SIZE = factors[0];
-    sigma = factors[1];
-
+    KERNEL_SIZE = arguments[0].number;
+    sigma = arguments[1].number;
 
 
 
     double **kernel = kernel_filter(KERNEL_SIZE, sigma);
     apply_kernel(kernel, KERNEL_SIZE);
     write_png_file(OUTPUT_PATH, pixels, width, height);
-
+    free(arguments);
 
 
 }
@@ -141,10 +140,10 @@ void gaussian(char* args)
 void resize(char* args)
 {
 
-    double factors[2];
-    split_factors(args, factors, 'x');
-    int image_width = factors[0];
-    int image_height = factors[1];
+
+    Arg* arguments = split_args(args, 2, 'x');
+    int image_width = arguments[0].number;
+    int image_height = arguments[1].number;
 
     png_bytep* new_image = alloc_image(image_height, image_width);
 
@@ -179,7 +178,7 @@ void resize(char* args)
 
 
     write_png_file(OUTPUT_PATH, new_image, image_width, image_height);
-
+    free(arguments);
 }
 
 
@@ -257,4 +256,16 @@ void histogram()
 
 }
 
+void filter(char* args)
+{
+    int r, g, b;
+
+    Arg* arguments = split_args(args, 2, 'x');
+    char* hex_code = arguments[0].str;
+    double opacity = arguments[1].number;
+
+    hex_to_rgb(hex_code, &r, &g, &b);
+    printf("%d:%d:%d %f\n", r,g,b, opacity);
+
+}
 

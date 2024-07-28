@@ -1,4 +1,5 @@
 #define HISTOGRAM_LENGTH 25
+#include <ctype.h>
 
 typedef struct {
     char* name;
@@ -8,18 +9,52 @@ typedef struct {
     int min;
 } ColorMode;
 
-void split_factors(char* args, double* factors, char seperator)
+typedef struct {
+    char* str;
+    double number;
+} Arg;
+
+bool is_numeric(const char *str) {
+    char *endptr;
+    int errno = 0;
+
+    if (!isdigit(*str) && *str != '.') {
+        return false;
+    }
+    double val = strtod(str, &endptr);
+
+    if (errno != 0 || *endptr != '\0' || str == endptr) {
+        return false;
+    }
+    return true;
+}
+
+Arg* split_args(char* args, int count, char seperator)
 {
     char *token;
     int ind = 0;
+    Arg* arguments = malloc(count * sizeof(Arg));
+
 
     token = strtok(args, &seperator);
 
+
     while (token != NULL)
     {
-        factors[ind++] = atof(token);
+
+        if (is_numeric(token) == true) {
+
+            arguments[ind++].number = atof(token);
+
+        }
+        else {
+            arguments[ind++].str = token;
+        }
+
         token = strtok(NULL, &seperator);
     }
+
+    return arguments;
 
 }
 
@@ -97,4 +132,13 @@ void print_table(ColorMode red, ColorMode green, ColorMode blue)
 
     print_x_axis(red, green, blue);
     printf("\n\n\n");
+}
+
+void hex_to_rgb(const char* hex_code, int* r, int* g, int* b) {
+
+    if (hex_code[0] == '#') {
+        hex_code++;
+    }
+
+    sscanf(hex_code, "%02x%02x%02x", r, g, b);
 }
