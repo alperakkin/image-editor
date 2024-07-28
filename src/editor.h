@@ -265,7 +265,27 @@ void filter(char* args)
     double opacity = arguments[1].number;
 
     hex_to_rgb(hex_code, &r, &g, &b);
-    printf("%d:%d:%d %f\n", r,g,b, opacity);
+
+    if (opacity > 1.0) opacity = 1;
+
+    for(int y = 0; y < height; y++)
+    {
+        png_bytep row = pixels[y];
+        for(int x = 0; x < width; x++)
+        {
+            png_bytep px = &(row[x * 4]);
+
+            px[0] = (int) (opacity * r + (1-opacity) * px[0]);
+            px[1] = (int) (opacity * g + (1-opacity) * px[1]);
+            px[2] = (int) (opacity * b + (1-opacity) * px[2]);
+
+        }
+    }
+
+
+    write_png_file(OUTPUT_PATH, pixels, width, height);
+    free(arguments);
+
 
 }
 
