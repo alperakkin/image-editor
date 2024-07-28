@@ -1,3 +1,5 @@
+#include "functions.h"
+
 void help() {
 
     printf("----------------- Help -------------------\n\n");
@@ -42,8 +44,8 @@ FunctionList parse_args(int argc, char *argv[])
             help();
             return function_list;
         }
-        if (strcmp(argv[i], "-i") == 0) input_path = argv[i+1];
-        if (strcmp(argv[i], "-o") == 0) output_path = argv[i+1];
+        if (strcmp(argv[i], "-i") == 0) INPUT_PATH = argv[i+1];
+        if (strcmp(argv[i], "-o") == 0) OUTPUT_PATH = argv[i+1];
         if (strcmp(argv[i], "-g") == 0) push(&function_list, grayscale, NULL);
         if (strcmp(argv[i], "-c") == 0) push(&function_list, contrast, argv[i+1]);
         if (strcmp(argv[i], "-b") == 0) push(&function_list, brightness, argv[i+1]);

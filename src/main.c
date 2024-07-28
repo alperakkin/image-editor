@@ -8,6 +8,7 @@
 #include "argparse.h"
 
 
+
 int main(int argc, char *argv[])
 {
   if(argc <= 1)
@@ -19,7 +20,7 @@ int main(int argc, char *argv[])
   FunctionList functions = parse_args(argc, argv);
   if (functions.length==0) return 1;
 
-  read_png_file(input_path);
+  read_png_file(INPUT_PATH);
   process_functions(&functions);
 
   return 0;

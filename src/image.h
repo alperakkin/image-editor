@@ -8,8 +8,8 @@ png_byte bit_depth;
 png_bytep *pixels = NULL;
 
 
-void read_png_file(char *filename) {
-  FILE *fp = fopen(filename, "rb");
+void read_png_file(const char *FILENAME) {
+  FILE *fp = fopen(FILENAME, "rb");
 
   png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
   if(!png) abort();
@@ -91,12 +91,12 @@ void free_image_data(png_bytep* image_data, int image_height)
 
 }
 
-void write_png_file(char *filename, png_bytep* image_data,
+void write_png_file(const char *FILENAME, png_bytep* image_data,
                     int image_width, int image_height)
 {
   int y;
 
-  FILE *fp = fopen(filename, "wb");
+  FILE *fp = fopen(FILENAME, "wb");
   if(!fp) abort();
 
   png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
