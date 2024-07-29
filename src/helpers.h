@@ -8,13 +8,13 @@ typedef struct {
 
 
 
-Intensity intensity()
+Intensity intensity(Image image)
 {
     Intensity intensity_data = {255, 0};
-    for(int y = 0; y < height; y++)
+    for(int y = 0; y < image.height; y++)
     {
-        png_bytep row = pixels[y];
-        for(int x = 0; x < width; x++)
+        png_bytep row = image.pixels[y];
+        for(int x = 0; x < image.width; x++)
         {
             png_bytep px = &(row[x * 4]);
             int avg = (int)(px[0] + px[1] + px[2]) / 3;
@@ -55,19 +55,19 @@ double** kernel_filter(int kernel_size, float sigma)
 
 }
 
-void apply_kernel(double**kernel, int KERNEL_SIZE)
+void apply_kernel(double**kernel, int KERNEL_SIZE, Image image)
 {
     int KERNEL_RADIUS = (KERNEL_SIZE / 2) -1;
-    png_bytep* output = (png_bytep*)malloc(height * sizeof(png_bytep));
+    png_bytep* output = (png_bytep*)malloc(image.height * sizeof(png_bytep));
 
 
-    for (int i = 0; i < height; ++i) {
-        output[i] = (png_bytep)malloc(width * 4 * sizeof(png_byte));
+    for (int i = 0; i < image.height; ++i) {
+        output[i] = (png_bytep)malloc(image.width * 4 * sizeof(png_byte));
     }
 
 
-    for (int y = 0; y < height; ++y) {
-        for (int x = 0; x < width; ++x) {
+    for (int y = 0; y < image.height; ++y) {
+        for (int x = 0; x < image.width; ++x) {
             double r_sum = 0, g_sum = 0, b_sum = 0;
             double kernel_sum = 0;
             for (int ky = -KERNEL_RADIUS; ky <= KERNEL_RADIUS; ++ky) {
@@ -75,8 +75,8 @@ void apply_kernel(double**kernel, int KERNEL_SIZE)
                     int ix = x + kx;
                     int iy = y + ky;
 
-                    if (ix >= 0 && ix < width && iy >= 0 && iy < height) {
-                        png_bytep px = pixels[iy] + ix * 4;
+                    if (ix >= 0 && ix < image.width && iy >= 0 && iy < image.height) {
+                        png_bytep px = image.pixels[iy] + ix * 4;
 
                         double kernel_value = kernel[KERNEL_RADIUS + ky][KERNEL_RADIUS + kx];
 
@@ -97,8 +97,8 @@ void apply_kernel(double**kernel, int KERNEL_SIZE)
     }
 
 
-    for (int i = 0; i < height; ++i) {
-        memcpy(pixels[i], output[i], width * 4 * sizeof(png_byte));
+    for (int i = 0; i < image.height; ++i) {
+        memcpy(image.pixels[i], output[i], image.width * 4 * sizeof(png_byte));
         free(output[i]);
     }
     free(output);

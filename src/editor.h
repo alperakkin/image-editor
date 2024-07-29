@@ -11,33 +11,35 @@ const char* OUTPUT_PATH;
 
 
 void grayscale(){
-    for(int y = 0; y < height; y++)
-    {
-        png_bytep row = pixels[y];
-        for(int x = 0; x < width; x++)
-        {
-            png_bytep px = &(row[x * 4]);
-            int avg = (int)(px[0] + px[1] + px[2]) / 3;
-            px[0] = avg;
-            px[1] = avg;
-            px[2] = avg;
-    }
+  Image image = read_png_file(INPUT_PATH);
+  for (int y = 0; y < image.height; y++)
+  {
+      png_bytep row = image.pixels[y];
+      for(int x = 0; x < image.width; x++)
+      {
+          png_bytep px = &(row[x * 4]);
+          int avg = (int)(px[0] + px[1] + px[2]) / 3;
+          px[0] = avg;
+          px[1] = avg;
+          px[2] = avg;
   }
-  write_png_file(OUTPUT_PATH, pixels, width, height);
+}
+  write_png_file(OUTPUT_PATH, image);
 }
 
 
 
 void contrast(char* factor)
 {
-    float f = atof(factor);
+  Image image = read_png_file(INPUT_PATH);
+  float f = atof(factor);
 
-    Intensity statistics = intensity();
+    Intensity statistics = intensity(image);
 
-    for(int y = 0; y < height; y++)
+    for(int y = 0; y < image.height; y++)
     {
-        png_bytep row = pixels[y];
-        for(int x = 0; x < width; x++)
+        png_bytep row = image.pixels[y];
+        for(int x = 0; x < image.width; x++)
         {
             png_bytep px = &(row[x * 4]);
 
@@ -71,19 +73,20 @@ void contrast(char* factor)
         }
     }
 
-    write_png_file(OUTPUT_PATH, pixels, width, height);
+    write_png_file(OUTPUT_PATH, image);
 
 }
 
 void brightness(char* factor)
 {
+  Image image = read_png_file(INPUT_PATH);
     float ratio = atof(factor);
 
 
-    for(int y = 0; y < height; y++)
+    for(int y = 0; y < image.height; y++)
     {
-        png_bytep row = pixels[y];
-        for(int x = 0; x < width; x++)
+        png_bytep row = image.pixels[y];
+        for(int x = 0; x < image.width; x++)
         {
             png_bytep px = &(row[x * 4]);
 
@@ -110,7 +113,7 @@ void brightness(char* factor)
         }
     }
 
-    write_png_file(OUTPUT_PATH, pixels, width, height);
+    write_png_file(OUTPUT_PATH, image);
 }
 
 
@@ -119,7 +122,7 @@ void brightness(char* factor)
 void gaussian(char* args)
 {
 
-
+    Image image = read_png_file(INPUT_PATH);
     int KERNEL_SIZE;
     float sigma;
     Arg* arguments = split_args(args, 2, 'x');
@@ -130,8 +133,8 @@ void gaussian(char* args)
 
 
     double **kernel = kernel_filter(KERNEL_SIZE, sigma);
-    apply_kernel(kernel, KERNEL_SIZE);
-    write_png_file(OUTPUT_PATH, pixels, width, height);
+    apply_kernel(kernel, KERNEL_SIZE, image);
+    write_png_file(OUTPUT_PATH, image);
     free(arguments);
 
 
@@ -139,16 +142,16 @@ void gaussian(char* args)
 
 void resize(char* args)
 {
-
+    Image image = read_png_file(INPUT_PATH);
 
     Arg* arguments = split_args(args, 2, 'x');
     int image_width = arguments[0].number;
     int image_height = arguments[1].number;
 
-    png_bytep* new_image = alloc_image(image_height, image_width);
+    Image new_image = alloc_image(image_height, image_width);
 
-    double x_scale = (double) width/image_width;
-    double y_scale = (double) height/image_height;
+    double x_scale = (double)image.width/image_width;
+    double y_scale = (double) image.height/image_height;
 
     for (int i=0; i<image_height; i++){
 
@@ -158,9 +161,9 @@ void resize(char* args)
             int col_val = (int) (j * x_scale);
 
 
-            png_bytep px = &(pixels[row_val][col_val * 4]);
+            png_bytep px = &(image.pixels[row_val][col_val * 4]);
 
-            png_bytep px_n = &(new_image[i][j * 4]);
+            png_bytep px_n = &(new_image.pixels[i][j * 4]);
 
 
             px_n[0] = px[0];  // R
@@ -177,13 +180,14 @@ void resize(char* args)
 
 
 
-    write_png_file(OUTPUT_PATH, new_image, image_width, image_height);
+    write_png_file(OUTPUT_PATH, new_image);
     free(arguments);
 }
 
 
 void histogram()
 {
+  Image image = read_png_file(INPUT_PATH);
     ColorMode red = {
         .name = "red",
         .value = "31",
@@ -224,10 +228,10 @@ void histogram()
         }
     };
 
-    for(int y = 0; y < height; y++)
+    for(int y = 0; y < image.height; y++)
     {
-        png_bytep row = pixels[y];
-        for(int x = 0; x < width; x++)
+        png_bytep row = image.pixels[y];
+        for(int x = 0; x < image.width; x++)
         {
             png_bytep px = &(row[x * 4]);
 
@@ -258,6 +262,7 @@ void histogram()
 
 void filter(char* args)
 {
+  Image image = read_png_file(INPUT_PATH);
     int r, g, b;
 
     Arg* arguments = split_args(args, 2, 'x');
@@ -268,10 +273,10 @@ void filter(char* args)
 
     if (opacity > 1.0) opacity = 1;
 
-    for(int y = 0; y < height; y++)
+    for(int y = 0; y < image.height; y++)
     {
-        png_bytep row = pixels[y];
-        for(int x = 0; x < width; x++)
+        png_bytep row = image.pixels[y];
+        for(int x = 0; x < image.width; x++)
         {
             png_bytep px = &(row[x * 4]);
 
@@ -283,9 +288,15 @@ void filter(char* args)
     }
 
 
-    write_png_file(OUTPUT_PATH, pixels, width, height);
+    write_png_file(OUTPUT_PATH, image);
     free(arguments);
 
 
+}
+
+void add_layer(char* args)
+{
+  Image image = read_png_file(INPUT_PATH);
+  printf("Add Layer Not Implemented!");
 }
 
