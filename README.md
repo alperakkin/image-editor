@@ -115,19 +115,39 @@ $ ./image-edit -i examples/castle.png  --histogram
 
 ![](https://github.com/alperakkin/image-editor/blob/main/examples/terminal-histogram.png)
 
+
+### Color Filter
+To apply color filter to the desired image file, add the following parameters.
+
+
+```bash
+$ ./image-edit -i examples/castle.png  -f f5da42x0.2  -o examples/castle-filter.png
+```
+
+This filter applies yellow filter (f5da42) with 0.2 opacity.
+
+
+#### Input
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle.png)
+
+#### Output
+
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-filter.png)
+
 ## PARAMETERS
 
--i: Input Image Path  
--o: Output Image Path  
--g: Gray Scale  
--c: Contrast  
--b: Brightness  
---gaussian: Gaussian Blur  
--r: Resize  
---histogram: Histogram  
+-i: Input Image Path
+-o: Output Image Path
+-g: Gray Scale
+-c: Contrast
+-b: Brightness
+--gaussian: Gaussian Blur
+-r: Resize
+--histogram: Histogram
+-f: Color Filter
 
 
-It is also possible to apply multi filters at once  
+It is also possible to apply multi filters at once
 
 ```bash
 $ ./image-edit -i input.png -o output.png  -g -c 1.2
