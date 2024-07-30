@@ -19,7 +19,8 @@ void help() {
     printf("-r: Resize Image\n");
     printf("--histogram: Get Histogram Of Channels\n");
     printf("-f: Color Filter\n");
-    printf("--opacity: Opacity (Required By: Color Filter)\n");
+    printf("--strength: Filter Strength (Required By: Color Filter)\n");
+    printf("--opacity: Opacity\n");
     printf("--color: Color [Hex Value] (Required By: Color Filter)n");
     printf("\n");
     printf("-------------------------------------------\n\n");
@@ -106,11 +107,15 @@ void parse_args(int argc, char *argv[])
 
     if (find_argument("-f", argv, argc, false))
     {
-        float opacity = (float) atof(find_argument("--opacity", argv, argc, true));
+        float strength = (float) atof(find_argument("--strength", argv, argc, true));
         char* color = find_argument("--color", argv, argc, true);
 
-        output = filter(image, color, opacity);
+        output = filter(image, color, strength);
     }
+
+    char* factor = find_argument("--opacity", argv, argc, false);
+    if(factor) output = opacity(image, (float) atof(factor));
+
 //     if (strcmp(argv[i], "-l") == 0) push(&function_list, add_layer, argv[i+1]);
 
 

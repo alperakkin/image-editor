@@ -246,7 +246,7 @@ void histogram(Image image)
 
 }
 
-Image filter(Image image, char* color, float opacity)
+Image filter(Image image, char* color, float strength)
 {
 
     int r, g, b;
@@ -255,7 +255,7 @@ Image filter(Image image, char* color, float opacity)
 
     hex_to_rgb(hex_code, &r, &g, &b);
 
-    if (opacity > 1.0) opacity = 1.0;
+    if (strength > 1.0) strength = 1.0;
 
     for(int y = 0; y < image.height; y++)
     {
@@ -264,14 +264,35 @@ Image filter(Image image, char* color, float opacity)
         {
             png_bytep px = &(row[x * 4]);
 
-            px[0] = (int) (opacity * r + (1-opacity) * px[0]);
-            px[1] = (int) (opacity * g + (1-opacity) * px[1]);
-            px[2] = (int) (opacity * b + (1-opacity) * px[2]);
+            px[0] = (int) (strength * r + (1-strength) * px[0]);
+            px[1] = (int) (strength * g + (1-strength) * px[1]);
+            px[2] = (int) (strength * b + (1-strength) * px[2]);
 
         }
     }
 
     return image;
+}
+
+Image opacity(Image image, float factor)
+{
+    if (factor > 1) factor = 1;
+
+    for(int y = 0; y < image.height; y++)
+    {
+        png_bytep row = image.pixels[y];
+        for(int x = 0; x < image.width; x++)
+        {
+            png_bytep px = &(row[x * 4]);
+
+            px[3] = (int) (factor * 255);
+
+
+        }
+    }
+
+    return image;
+
 }
 
 // void add_layer(char* args)

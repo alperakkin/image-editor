@@ -24,7 +24,7 @@ $ ./image-edit -i input.png -o output.png
 ```
 
 ### Gray Scale
-To gray scale the desired image file, add following parameters
+To apply gray scale to the desired image file, add following parameters
 
 ```bash
 $ ./image-edit -i input.png -o output.png -g
@@ -35,6 +35,23 @@ $ ./image-edit -i input.png -o output.png -g
 #### Output
 
 ![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-gs.png)
+
+
+### Opacity
+
+To apply opacity to the desired image, add following parameters
+
+```bash
+$ ./image-edit -i examples/castle.png  --opacity 0.3  -o examples/castle-opacity.png
+```
+#### Input
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle.png)
+
+#### Output
+
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-opacity.png)
+
+
 
 ### Contrast
 To apply contrast to the desired image file, add following parameters
