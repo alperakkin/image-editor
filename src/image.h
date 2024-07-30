@@ -109,10 +109,13 @@ void write_png_file(const char *FILENAME, Image image)
   png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
   if (!png) abort();
 
+
   png_infop info = png_create_info_struct(png);
   if (!info) abort();
 
+
   if (setjmp(png_jmpbuf(png))) abort();
+
 
   png_init_io(png, fp);
 
@@ -129,6 +132,7 @@ void write_png_file(const char *FILENAME, Image image)
   png_write_info(png, info);
 
   if (!image.pixels) abort();
+
 
   png_write_image(png, image.pixels);
   png_write_end(png, NULL);

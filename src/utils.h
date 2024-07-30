@@ -9,54 +9,24 @@ typedef struct {
     int min;
 } ColorMode;
 
-typedef struct {
-    char* str;
-    double number;
-} Arg;
 
-bool is_numeric(const char *str) {
-    char *endptr;
-    int errno = 0;
 
-    if (!isdigit(*str) && *str != '.') {
-        return false;
-    }
-    double val = strtod(str, &endptr);
 
-    if (errno != 0 || *endptr != '\0' || str == endptr) {
-        return false;
-    }
-    return true;
-}
 
-Arg* split_args(char* args, int count, char seperator)
+void split_args(char* expression, char** factors, char separator)
 {
     char *token;
     int ind = 0;
-    Arg* arguments = malloc(count * sizeof(Arg));
 
-
-    token = strtok(args, &seperator);
-
+    token = strtok(expression, &separator);
 
     while (token != NULL)
     {
-
-        if (is_numeric(token) == true) {
-
-            arguments[ind++].number = atof(token);
-
-        }
-        else {
-            arguments[ind++].str = token;
-        }
-
-        token = strtok(NULL, &seperator);
+        factors[ind++] = token;
+        token = strtok(NULL, &separator);
     }
-
-    return arguments;
-
 }
+
 
 
 void print_color(ColorMode color, char* text)
@@ -134,11 +104,19 @@ void print_table(ColorMode red, ColorMode green, ColorMode blue)
     printf("\n\n\n");
 }
 
-void hex_to_rgb(const char* hex_code, int* r, int* g, int* b) {
+void raise_error(char* message)
+{
+    printf("\033[31mError: %s\n\033[0m", message);
+    exit(1);
+}
 
-    if (hex_code[0] == '#') {
-        hex_code++;
-    }
+void hex_to_rgb(char* hex_code, int* r, int* g, int* b)
+{
 
-    sscanf(hex_code, "%02x%02x%02x", r, g, b);
+    if (hex_code == NULL || strlen(hex_code) < 7) raise_error("Invalid hex code.");
+
+    if (hex_code[0] == '#') hex_code++;
+
+    if (sscanf(hex_code, "%02x%02x%02x", r, g, b) != 3) raise_error("Failed to parse hex code.\n");
+
 }

@@ -1,4 +1,4 @@
-#include "functions.h"
+#define DEFAULT_VALUE "found";
 
 void help() {
 
@@ -14,54 +14,113 @@ void help() {
     printf("-c: Set contrast\n");
     printf("-b: Set brightness\n");
     printf("--gaussian: Set Gaussian Blur\n");
+    printf("--kernel-size: Kernel Size (Required By: Gaussian)\n");
+    printf("--sigma: Sigma (Required By: Gaussian)\n");
     printf("-r: Resize Image\n");
     printf("--histogram: Get Histogram Of Channels\n");
     printf("-f: Color Filter\n");
-    printf("-l: Add Layer\n");
+    printf("--opacity: Opacity (Required By: Color Filter)\n");
+    printf("--color: Color [Hex Value] (Required By: Color Filter)n");
     printf("\n");
     printf("-------------------------------------------\n\n");
-}
-
-
-void push(FunctionList *function_list,  void (*name)(char*), char* arg){
-    struct Function new_func = {arg, name};
-    function_list->functions[function_list->length++] = new_func;
 
 }
 
-
-FunctionList parse_args(int argc, char *argv[])
+char* find_argument(char* arg, char* argv[], int argc, bool raise)
 {
 
-    FunctionList function_list;
-    function_list.functions = \
-        (struct Function *) malloc((argc - 1) * sizeof(struct Function));
+    int index = 0;
 
-    function_list.length = 0;
+    for (int i=0;i<argc;i++)
+    {
+        if (strcmp(arg, argv[i]) == 0) index=++i;
 
-    for(int i=1; i<argc; i++)
+    }
+    if (index==0 && raise)
+    {
+        help();
+
+        char formatted_string[100];
+        sprintf(formatted_string, "Please provide %s argument", arg);
+        raise_error(formatted_string);
+
+    }
+    else if (index==0) return 0;
+    if (index > argc) return DEFAULT_VALUE;
+    return argv[index];
+}
+
+
+void parse_args(int argc, char *argv[])
+{
+
+    Image image;
+    Image output;
+
+
+
+    if (find_argument("-h", argv, argc, false)) help();
+
+    char* input_path = find_argument("-i", argv, argc, true);
+    if (input_path) image = read_png_file(input_path);
+
+    if (find_argument("-g", argv, argc, false)) grayscale(image);
+
+    char* contrast_val = find_argument("-c", argv, argc, false);
+    if (contrast_val)
+    {
+        float factor = (float) atof(contrast_val);
+        output = contrast(image, factor);
+    };
+
+    char* brightness_ratio = find_argument("-b", argv, argc, false);
+    if (brightness_ratio)
+    {
+        float ratio = (float) atof(brightness_ratio);
+        brightness(image, ratio);
+    }
+
+    char* gauss= find_argument("--gaussian", argv, argc, false);
+    if (gauss)
     {
 
-        if (strcmp(argv[i], "-h") == 0)
-        {
-            help();
-            return function_list;
-        }
-        if (strcmp(argv[i], "-i") == 0) INPUT_PATH = argv[i+1];
-        if (strcmp(argv[i], "-o") == 0) OUTPUT_PATH = argv[i+1];
-        if (strcmp(argv[i], "-g") == 0) push(&function_list, grayscale, NULL);
-        if (strcmp(argv[i], "-c") == 0) push(&function_list, contrast, argv[i+1]);
-        if (strcmp(argv[i], "-b") == 0) push(&function_list, brightness, argv[i+1]);
-        if (strcmp(argv[i], "--gaussian") == 0) push(&function_list, gaussian, argv[i+1]);
-        if (strcmp(argv[i], "-r") == 0) push(&function_list, resize, argv[i+1]);
-        if (strcmp(argv[i], "--histogram") == 0) push(&function_list, histogram, NULL);
-        if (strcmp(argv[i], "-f") == 0) push(&function_list, filter, argv[i+1]);
-        if (strcmp(argv[i], "-l") == 0) push(&function_list, add_layer, argv[i+1]);
+        int kernel_size = (int) atof(find_argument("--kernel-size", argv, argc, true));
+        float sigma = (float) atof(find_argument("--sigma", argv, argc, true));
+
+        output = gaussian(image, kernel_size, sigma);
 
     }
 
+    char* dimensions = find_argument("-r", argv, argc, false);
+    if (dimensions)
+    {
+        char* size[2];
+        split_args(dimensions, size, 'x');
 
-    return function_list;
+        int width = (int) atof(size[0]);
+        int height = (int) atof(size[1]);
+        output = resize(image, width, height);
+    }
+
+    if (find_argument("--histogram", argv, argc, false))  histogram(image);
+
+    if (find_argument("-f", argv, argc, false))
+    {
+        float opacity = (float) atof(find_argument("--opacity", argv, argc, true));
+        char* color = find_argument("--color", argv, argc, true);
+
+        output = filter(image, color, opacity);
+    }
+//     if (strcmp(argv[i], "-l") == 0) push(&function_list, add_layer, argv[i+1]);
+
+
+    OUTPUT_PATH = find_argument("-o", argv, argc, true);
+    write_png_file(OUTPUT_PATH, output);
+
+
+
+
+
 
 
 }

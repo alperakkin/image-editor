@@ -1,7 +1,14 @@
+
 #include <float.h>
 #include <stdlib.h>
 #include "utils.h"
 #include "helpers.h"
+
+
+
+
+
+
 
 
 const char* INPUT_PATH;
@@ -10,30 +17,27 @@ const char* OUTPUT_PATH;
 
 
 
-void grayscale(){
-  Image image = read_png_file(INPUT_PATH);
+void grayscale(Image image){
   for (int y = 0; y < image.height; y++)
-  {
-      png_bytep row = image.pixels[y];
-      for(int x = 0; x < image.width; x++)
-      {
+    {
+        png_bytep row = image.pixels[y];
+        for(int x = 0; x < image.width; x++)
+        {
           png_bytep px = &(row[x * 4]);
           int avg = (int)(px[0] + px[1] + px[2]) / 3;
           px[0] = avg;
           px[1] = avg;
           px[2] = avg;
-  }
-}
+        }
+    }
+
   write_png_file(OUTPUT_PATH, image);
 }
 
 
 
-void contrast(char* factor)
+Image  contrast(Image image, float f)
 {
-  Image image = read_png_file(INPUT_PATH);
-  float f = atof(factor);
-
     Intensity statistics = intensity(image);
 
     for(int y = 0; y < image.height; y++)
@@ -73,15 +77,13 @@ void contrast(char* factor)
         }
     }
 
-    write_png_file(OUTPUT_PATH, image);
+    return image;
+
 
 }
 
-void brightness(char* factor)
+Image brightness(Image image, float ratio)
 {
-  Image image = read_png_file(INPUT_PATH);
-    float ratio = atof(factor);
-
 
     for(int y = 0; y < image.height; y++)
     {
@@ -113,49 +115,34 @@ void brightness(char* factor)
         }
     }
 
-    write_png_file(OUTPUT_PATH, image);
-}
 
 
-
-
-void gaussian(char* args)
-{
-
-    Image image = read_png_file(INPUT_PATH);
-    int KERNEL_SIZE;
-    float sigma;
-    Arg* arguments = split_args(args, 2, 'x');
-
-    KERNEL_SIZE = arguments[0].number;
-    sigma = arguments[1].number;
-
-
-
-    double **kernel = kernel_filter(KERNEL_SIZE, sigma);
-    apply_kernel(kernel, KERNEL_SIZE, image);
-    write_png_file(OUTPUT_PATH, image);
-    free(arguments);
-
+    return image;
 
 }
 
-void resize(char* args)
+
+
+
+Image gaussian(Image image, int kernel_size, float sigma)
 {
-    Image image = read_png_file(INPUT_PATH);
+    double **kernel = kernel_filter(kernel_size, sigma);
+    apply_kernel(kernel, kernel_size, image);
 
-    Arg* arguments = split_args(args, 2, 'x');
-    int image_width = arguments[0].number;
-    int image_height = arguments[1].number;
+    return image;
+}
 
-    Image new_image = alloc_image(image_height, image_width);
+Image resize(Image image, int width, int height)
+{
 
-    double x_scale = (double)image.width/image_width;
-    double y_scale = (double) image.height/image_height;
+    Image new_image = alloc_image(height, width);
 
-    for (int i=0; i<image_height; i++){
+    double x_scale = (double)image.width/width;
+    double y_scale = (double) image.height/height;
 
-        for (int j=0; j<image_width; j++){
+    for (int i=0; i<height; i++){
+
+        for (int j=0; j<width; j++){
 
             int row_val = (int) (i * y_scale);
             int col_val = (int) (j * x_scale);
@@ -179,15 +166,14 @@ void resize(char* args)
     }
 
 
+    free_image(image);
+    return new_image;
 
-    write_png_file(OUTPUT_PATH, new_image);
-    free(arguments);
 }
 
 
-void histogram()
+void histogram(Image image)
 {
-  Image image = read_png_file(INPUT_PATH);
     ColorMode red = {
         .name = "red",
         .value = "31",
@@ -260,18 +246,16 @@ void histogram()
 
 }
 
-void filter(char* args)
+Image filter(Image image, char* color, float opacity)
 {
-  Image image = read_png_file(INPUT_PATH);
+
     int r, g, b;
 
-    Arg* arguments = split_args(args, 2, 'x');
-    char* hex_code = arguments[0].str;
-    double opacity = arguments[1].number;
+    char* hex_code = color;
 
     hex_to_rgb(hex_code, &r, &g, &b);
 
-    if (opacity > 1.0) opacity = 1;
+    if (opacity > 1.0) opacity = 1.0;
 
     for(int y = 0; y < image.height; y++)
     {
@@ -287,16 +271,11 @@ void filter(char* args)
         }
     }
 
-
-    write_png_file(OUTPUT_PATH, image);
-    free(arguments);
-
-
+    return image;
 }
 
-void add_layer(char* args)
-{
-  Image image = read_png_file(INPUT_PATH);
-  printf("Add Layer Not Implemented!");
-}
-
+// void add_layer(char* args)
+// {
+//   Image image = read_png_file(INPUT_PATH);
+//   printf("Add Layer Not Implemented!");
+// }

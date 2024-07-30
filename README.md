@@ -68,7 +68,7 @@ To apply Gaussian Blur to the desired image file, add following parameters
 
 
 ```bash
-$ ./image-edit -i examples/castle.png  --gaussian 50x1.4  -o examples/castle-gaussian.png
+$ ./image-edit -i examples/castle.png  --gaussian --kernel-size 50 --sigma 1.4  -o examples/castle-gaussian.png
 ```
 
 The --gaussian 50x1.4 parameter applies a Gaussian blur effect, where 50 specifies the size of the Gaussian kernel matrix (e.g., 50x50), and 1.4 indicates the standard deviation (sigma) of the Gaussian distribution.
@@ -121,10 +121,10 @@ To apply color filter to the desired image file, add the following parameters.
 
 
 ```bash
-$ ./image-edit -i examples/castle.png  -f f5da42x0.2  -o examples/castle-filter.png
+$ ./image-edit -i examples/castle.png  -f --color "#f5da42" --opacity 0.2  -o examples/castle-filter.png
 ```
 
-This filter applies yellow filter (f5da42) with 0.2 opacity.
+This filter applies yellow filter (#f5da42) with 0.2 opacity.
 
 
 #### Input
@@ -145,3 +145,25 @@ This filter applies yellow filter (f5da42) with 0.2 opacity.
 -r: Resize
 --histogram: Histogram
 -f: Color Filter
+--color: Color Hex Value
+--opacity: Opacity
+--kernel-size: Kernel Size
+--sigma: Sigma Value
+
+
+
+## MULTIPLE ARGUMENTS
+
+Multiple arguments can be assigned to the input image as shown below
+
+```bash
+$ ./image-edit -i examples/castle.png  -r 128x128 --gaussian --kernel-size 50 --sigma 1.4 -o examples/castle-multiple.png
+```
+
+
+#### Input
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle.png)
+
+#### Output
+
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-multiple.png)
