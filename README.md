@@ -151,6 +151,27 @@ This filter applies yellow filter (#f5da42) with 0.2 opacity.
 
 ![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-filter.png)
 
+
+### Add Image Layer
+To add new image to existing image, add the following parameters.
+
+
+```bash
+$   ./image-edit -i examples/castle.png -l --path examples/sun.png --pos 170x30  --alpha-mask 200 -o examples/castle-layer.png
+```
+
+This command overlays sun.png onto castle.png at coordinates x:170 and y:30. A higher value of the alpha mask results in a loss of detail in the sun flares, while a lower value creates noise in the image.
+
+
+
+#### Inputs
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle.png)
+![](https://github.com/alperakkin/image-editor/blob/main/examples/sun.png)
+
+#### Output
+
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-layer.png)
+
 ## PARAMETERS
 
 -i: Input Image Path

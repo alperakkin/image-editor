@@ -295,8 +295,39 @@ Image opacity(Image image, float factor)
 
 }
 
-// void add_layer(char* args)
-// {
-//   Image image = read_png_file(INPUT_PATH);
-//   printf("Add Layer Not Implemented!");
-// }
+Image add_layer(Image image, Image patch, int pos_x, int pos_y, int alpha)
+{
+    if (pos_x < 0 || pos_x > image.width || pos_y < 0 || pos_y > image.height)  raise_error("Invalid position!");
+
+    for(int y = 0; y < patch.height; y++)
+    {
+        png_bytep row = patch.pixels[y];
+        for(int x = 0; x < patch.width; x++)
+        {
+           png_bytep px = &(row[x * 4]);
+           int org_x = x + pos_x;
+           int org_y = y + pos_y;
+           if (org_x <= image.width && org_y <= image.height)
+           {
+            png_bytep image_row = image.pixels[org_y];
+            png_bytep org_px = &(image_row[org_x * 4]);
+
+            if (px[3] <= alpha) continue;
+
+            org_px[0] = px[0];
+            org_px[1] = px[1];
+            org_px[2] = px[2];
+
+
+
+           }
+
+
+
+
+
+        }
+    }
+
+    return image;
+}

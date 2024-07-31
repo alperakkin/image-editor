@@ -22,6 +22,10 @@ void help() {
     printf("--strength: Filter Strength (Required By: Color Filter)\n");
     printf("--opacity: Opacity\n");
     printf("--color: Color [Hex Value] (Required By: Color Filter)n");
+    printf("-l: Add Image Layer\n");
+    printf("--path: New Layer Image Path (Required By: Add Image Layer)\n");
+    printf("--pos: Position Of The Image (Required By: Add Image Layer)\n");
+    printf("--alpha-mask: Alpha Mask (Required By: Add Image Layer)\n");
     printf("\n");
     printf("-------------------------------------------\n\n");
 
@@ -116,7 +120,25 @@ void parse_args(int argc, char *argv[])
     char* factor = find_argument("--opacity", argv, argc, false);
     if(factor) output = opacity(image, (float) atof(factor));
 
-//     if (strcmp(argv[i], "-l") == 0) push(&function_list, add_layer, argv[i+1]);
+    char* layer = find_argument("-l", argv, argc, false);
+    if (layer)
+    {
+        char* path = find_argument("--path", argv, argc, true);
+        char* position = find_argument("--pos", argv, argc, true);
+        int alpha = (int) atof(find_argument("--alpha-mask", argv, argc, true));
+
+        char* size[2];
+        split_args(position, size, 'x');
+
+        int x = (int) atof(size[0]);
+        int y = (int) atof(size[1]);
+
+        Image patch = read_png_file(path);
+
+        output = add_layer(image, patch, x, y, alpha);
+
+
+    }
 
 
     OUTPUT_PATH = find_argument("-o", argv, argc, true);

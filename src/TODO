@@ -6,8 +6,8 @@
 [x] Resize
 [x] Histogram
 [x] Color Filter
-[ ] Opacity
-[ ] Add Image Layer
+[x] Opacity
+[x] Add Image Layer
 [ ] Crop
 [ ] Rotate
 [ ] Invert
