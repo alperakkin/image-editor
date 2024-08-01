@@ -26,6 +26,11 @@ void help() {
     printf("--path: New Layer Image Path (Required By: Add Image Layer)\n");
     printf("--pos: Position Of The Image (Required By: Add Image Layer)\n");
     printf("--alpha-mask: Alpha Mask (Required By: Add Image Layer)\n");
+    printf("--crop: Crop Image\n");
+    printf("--left: Crop From left (Optional: If not provided left value will be evaluated as 0))\n");
+    printf("--right: Crop From right (Optional: If not provided right value will be evaluated as 0))\n");
+    printf("--top: Crop From top (Optional: If not provided top value will be evaluated as 0))\n");
+    printf("--bottom: Crop From bottom (Optional: If not provided bottom value will be evaluated as 0))\n");
     printf("\n");
     printf("-------------------------------------------\n\n");
 

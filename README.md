@@ -172,6 +172,27 @@ This command overlays sun.png onto castle.png at coordinates x:170 and y:30. A h
 
 ![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-layer.png)
 
+### Crop Image
+To crop the image from sides, add the following parameters.
+
+
+```bash
+$ ❯ ./image-edit -i examples/castle.png --crop --left 100  --right 10 --top 30 --bottom 20 -o examples/castle-cropped.png
+```
+
+Side parameters are optional. It is possible to provide just desired sides.
+
+
+
+
+
+#### Input
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle.png)
+
+#### Output
+
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-cropped.png)
+
 ## PARAMETERS
 
 -i: Input Image Path
@@ -187,6 +208,14 @@ This command overlays sun.png onto castle.png at coordinates x:170 and y:30. A h
 --opacity: Opacity
 --kernel-size: Kernel Size
 --sigma: Sigma Value
+-l: Add Image Layer
+--path: Layer Path
+--pos: Locate Image
+--crop: Crop Image
+--left: Left Side in Pixels
+--right: Right Side in Pixels
+--top: Top Side in Pixels
+--bottom: Bottom Side in Pixels
 
 
 
