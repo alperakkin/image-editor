@@ -331,3 +331,35 @@ Image add_layer(Image image, Image patch, int pos_x, int pos_y, int alpha)
 
     return image;
 }
+
+Image crop(Image image, int left, int right, int top, int bottom)
+{
+    if (left < 0 || left > image.width || top < 0 || top > image.height ||
+        right < 0 || right > image.width || bottom < 0 || bottom > image.height)  raise_error("Invalid Crop Parameters!");
+
+    int new_height = image.height - (top + bottom);
+    int new_width = image.width - (left + right);
+
+    Image cropped = alloc_image(new_height, new_width);
+
+
+    for(int y = 0; y < cropped.height; y++)
+    {
+        png_bytep row = cropped.pixels[y];
+        png_bytep org_row = image.pixels[y+top];
+        for(int x = 0; x < cropped.width; x++)
+        {
+
+            png_bytep px = &(row[x * 4]);
+            png_bytep org_px = &(org_row[(x + left) * 4]);
+
+            px[0] = org_px[0];
+            px[1] = org_px[1];
+            px[2] = org_px[2];
+            px[3] = org_px[3];
+        }
+    }
+
+    return cropped;
+
+}

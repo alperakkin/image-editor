@@ -50,7 +50,10 @@ char* find_argument(char* arg, char* argv[], int argc, bool raise)
         raise_error(formatted_string);
 
     }
-    else if (index==0) return 0;
+
+    else if (index==0) {
+        return NULL;
+    }
     if (index > argc) return DEFAULT_VALUE;
     return argv[index];
 }
@@ -138,6 +141,31 @@ void parse_args(int argc, char *argv[])
         output = add_layer(image, patch, x, y, alpha);
 
 
+    }
+
+    if (find_argument("--crop", argv, argc, false))
+    {
+
+
+
+        int left;
+        char* left_value = find_argument("--left", argv, argc, false);
+        if(!left_value) left = 0; else left = (int) atof(left_value);
+
+        int right;
+        char* right_value = find_argument("--right", argv, argc, false);
+        if(!right_value) right = 0; else right = (int) atof(right_value);
+
+        int top;
+        char* top_value = find_argument("--top", argv, argc, false);
+        if(!top_value) top = 0; else top = (int) atof(top_value);
+
+        int bottom;
+        char* bottom_value = find_argument("--bottom", argv, argc, false);
+        if(!bottom_value) bottom = 0; else bottom = (int) atof(bottom_value);
+
+
+        output = crop(image, left, right, top, bottom);
     }
 
 
