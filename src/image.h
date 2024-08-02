@@ -77,7 +77,7 @@ Image read_png_file(const char *FILENAME) {
 }
 
 
-Image alloc_image(image_height, image_width){
+Image alloc_image(image_width, image_height){
   Image new_image;
   new_image.width = image_width;
   new_image.height = image_height;

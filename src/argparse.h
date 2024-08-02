@@ -31,6 +31,7 @@ void help() {
     printf("--right: Crop From right (Optional: If not provided right value will be evaluated as 0))\n");
     printf("--top: Crop From top (Optional: If not provided top value will be evaluated as 0))\n");
     printf("--bottom: Crop From bottom (Optional: If not provided bottom value will be evaluated as 0))\n");
+    printf("--rotate: Rotate Image\n");
     printf("\n");
     printf("-------------------------------------------\n\n");
 
@@ -171,6 +172,13 @@ void parse_args(int argc, char *argv[])
 
 
         output = crop(image, left, right, top, bottom);
+    }
+
+    char* rotate = find_argument("--rotate", argv, argc, false);
+    if (rotate)
+    {
+        double angle = atof(rotate);
+        output = rotate_image(image, angle);
     }
 
 
