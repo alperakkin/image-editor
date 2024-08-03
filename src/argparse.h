@@ -1,5 +1,6 @@
 #define DEFAULT_VALUE "found";
-
+int ARGC;
+char** ARGV;
 void help() {
 
     printf("----------------- Help -------------------\n\n");
@@ -32,19 +33,19 @@ void help() {
     printf("--top: Crop From top (Optional: If not provided top value will be evaluated as 0))\n");
     printf("--bottom: Crop From bottom (Optional: If not provided bottom value will be evaluated as 0))\n");
     printf("--rotate: Rotate Image\n");
+    printf("--invert: Invert Image\n");
     printf("\n");
     printf("-------------------------------------------\n\n");
 
 }
 
-char* find_argument(char* arg, char* argv[], int argc, bool raise)
+char* find_argument(char* arg, bool raise)
 {
-
     int index = 0;
 
-    for (int i=0;i<argc;i++)
+    for (int i=0;i<ARGC;i++)
     {
-        if (strcmp(arg, argv[i]) == 0) index=++i;
+        if (strcmp(arg, ARGV[i]) == 0) index=++i;
 
     }
     if (index==0 && raise)
@@ -60,8 +61,8 @@ char* find_argument(char* arg, char* argv[], int argc, bool raise)
     else if (index==0) {
         return NULL;
     }
-    if (index > argc) return DEFAULT_VALUE;
-    return argv[index];
+    if (index > ARGC) return DEFAULT_VALUE;
+    return ARGV[index];
 }
 
 
@@ -71,41 +72,48 @@ void parse_args(int argc, char *argv[])
     Image image;
     Image output;
 
+    extern char **ARGV;
+    extern int ARGC;
+    ARGV = argv;
+    ARGC = argc;
 
 
-    if (find_argument("-h", argv, argc, false)) help();
 
-    char* input_path = find_argument("-i", argv, argc, true);
+
+
+    if (find_argument("-h", false)) help();
+
+    char* input_path = find_argument("-i", true);
     if (input_path) image = read_png_file(input_path);
 
-    if (find_argument("-g", argv, argc, false)) grayscale(image);
+    if (find_argument("-g", false)) grayscale(image);
 
-    char* contrast_val = find_argument("-c", argv, argc, false);
+    char* contrast_val = find_argument("-c", false);
     if (contrast_val)
     {
         float factor = (float) atof(contrast_val);
         output = contrast(image, factor);
     };
 
-    char* brightness_ratio = find_argument("-b", argv, argc, false);
+    char* brightness_ratio = find_argument("-b", false);
     if (brightness_ratio)
     {
         float ratio = (float) atof(brightness_ratio);
         brightness(image, ratio);
     }
 
-    char* gauss= find_argument("--gaussian", argv, argc, false);
+    char* gauss= find_argument("--gaussian", false);
     if (gauss)
     {
 
-        int kernel_size = (int) atof(find_argument("--kernel-size", argv, argc, true));
-        float sigma = (float) atof(find_argument("--sigma", argv, argc, true));
+        int kernel_size = (int) atof(find_argument("--kernel-size", true));
+        float sigma = (float) atof(find_argument("--sigma", true));
 
         output = gaussian(image, kernel_size, sigma);
 
     }
 
-    char* dimensions = find_argument("-r", argv, argc, false);
+    char* dimensions = find_argument("-r", false);
     if (dimensions)
     {
         char* size[2];
@@ -116,25 +124,25 @@ void parse_args(int argc, char *argv[])
         output = resize(image, width, height);
     }
 
-    if (find_argument("--histogram", argv, argc, false))  histogram(image);
+    if (find_argument("--histogram", false))  histogram(image);
 
-    if (find_argument("-f", argv, argc, false))
+    if (find_argument("-f", false))
     {
-        float strength = (float) atof(find_argument("--strength", argv, argc, true));
-        char* color = find_argument("--color", argv, argc, true);
+        float strength = (float) atof(find_argument("--strength", true));
+        char* color = find_argument("--color", true);
 
         output = filter(image, color, strength);
     }
 
-    char* factor = find_argument("--opacity", argv, argc, false);
+    char* factor = find_argument("--opacity", false);
     if(factor) output = opacity(image, (float) atof(factor));
 
-    char* layer = find_argument("-l", argv, argc, false);
+    char* layer = find_argument("-l", false);
     if (layer)
     {
-        char* path = find_argument("--path", argv, argc, true);
-        char* position = find_argument("--pos", argv, argc, true);
-        int alpha = (int) atof(find_argument("--alpha-mask", argv, argc, true));
+        char* path = find_argument("--path", true);
+        char* position = find_argument("--pos", true);
+        int alpha = (int) atof(find_argument("--alpha-mask", true));
 
         char* size[2];
         split_args(position, size, 'x');
@@ -149,40 +157,39 @@ void parse_args(int argc, char *argv[])
 
     }
 
-    if (find_argument("--crop", argv, argc, false))
+    if (find_argument("--crop", false))
     {
 
-
-
         int left;
-        char* left_value = find_argument("--left", argv, argc, false);
+        char* left_value = find_argument("--left", false);
         if(!left_value) left = 0; else left = (int) atof(left_value);
 
         int right;
-        char* right_value = find_argument("--right", argv, argc, false);
+        char* right_value = find_argument("--right", false);
         if(!right_value) right = 0; else right = (int) atof(right_value);
 
         int top;
-        char* top_value = find_argument("--top", argv, argc, false);
+        char* top_value = find_argument("--top", false);
         if(!top_value) top = 0; else top = (int) atof(top_value);
 
         int bottom;
-        char* bottom_value = find_argument("--bottom", argv, argc, false);
+        char* bottom_value = find_argument("--bottom", false);
         if(!bottom_value) bottom = 0; else bottom = (int) atof(bottom_value);
 
 
         output = crop(image, left, right, top, bottom);
     }
 
-    char* rotate = find_argument("--rotate", argv, argc, false);
+    char* rotate = find_argument("--rotate", false);
     if (rotate)
     {
         double angle = atof(rotate);
         output = rotate_image(image, angle);
     }
 
+    // if (find_argument("--invert", false))
 
-    OUTPUT_PATH = find_argument("-o", argv, argc, true);
+    OUTPUT_PATH = find_argument("-o", true);
     write_png_file(OUTPUT_PATH, output);
 
 
