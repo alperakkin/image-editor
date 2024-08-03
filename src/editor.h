@@ -452,3 +452,35 @@ Image invert(Image image)
 
     return image;
 }
+
+Image add_border(Image image, char* color, int size)
+{
+
+    int r, g, b;
+
+    char* hex_code = color;
+
+    hex_to_rgb(hex_code, &r, &g, &b);
+
+    for(int y = 0; y < image.height; y++)
+    {
+        png_bytep row = image.pixels[y];
+        for(int x = 0; x < image.width; x++)
+        {
+            png_bytep px = &(row[x * 4]);
+
+
+            if (x < size || x > (image.width - size) ||
+                y < size || y > (image.height - size))
+                {
+                    px[0] = r;
+                    px[1] = g;
+                    px[2] = b;
+
+                }
+
+        }
+    }
+
+    return image;
+}

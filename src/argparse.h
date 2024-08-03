@@ -34,6 +34,7 @@ void help() {
     printf("--bottom: Crop From bottom (Optional: If not provided bottom value will be evaluated as 0))\n");
     printf("--rotate: Rotate Image\n");
     printf("--invert: Invert Image\n");
+    printf("--border: Add Borders\n");
     printf("\n");
     printf("-------------------------------------------\n\n");
 
@@ -78,10 +79,9 @@ void parse_args(int argc, char *argv[])
     ARGC = argc;
 
 
-
-
-
     if (find_argument("-h", false)) help();
+
+
 
     char* input_path = find_argument("-i", true);
     if (input_path) image = read_png_file(input_path);
@@ -189,6 +189,15 @@ void parse_args(int argc, char *argv[])
 
 
     if (find_argument("--invert", false)) output = invert(image);
+
+    char* border = find_argument("--border", false);
+    if (border)
+    {
+
+        char* color = find_argument("--color", true);
+        int border_size = (int) atof(border);
+        output = add_border(image, color, border_size);
+    }
 
 
     OUTPUT_PATH = find_argument("-o", true);
