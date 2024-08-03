@@ -197,7 +197,7 @@ To rotate the image with given angle in degrees, add the following parameters.
 
 
 ```bash
-$ ./image-edit -i examples/castle.png --rotate 30 -o examples/rotated.png
+$ ./image-edit -i examples/castle.png --rotate 30 -o examples/castle-rotated.png
 ```
 
 
