@@ -187,7 +187,9 @@ void parse_args(int argc, char *argv[])
         output = rotate_image(image, angle);
     }
 
-    // if (find_argument("--invert", false))
+
+    if (find_argument("--invert", false)) output = invert(image);
+
 
     OUTPUT_PATH = find_argument("-o", true);
     write_png_file(OUTPUT_PATH, output);

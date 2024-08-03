@@ -10,7 +10,7 @@
 [x] Add Image Layer
 [x] Crop
 [x] Rotate
-[ ] Invert
+[x] Invert
 [ ] Add Border
 [ ] Threshold
 [ ] Edge Detection

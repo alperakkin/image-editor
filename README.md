@@ -208,6 +208,23 @@ $ ./image-edit -i examples/castle.png --rotate 30 -o examples/castle-rotated.png
 
 ![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-rotated.png)
 
+
+### Invert Image
+To invert the colors of the image, add the following parameters.
+
+
+```bash
+$ ./image-edit -i examples/castle.png --invert -o examples/castle-rotated.png
+```
+
+
+#### Input
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle.png)
+
+#### Output
+
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-inverted.png)
+
 ## PARAMETERS
 
 -i: Input Image Path
@@ -232,6 +249,7 @@ $ ./image-edit -i examples/castle.png --rotate 30 -o examples/castle-rotated.png
 --top: Top Side in Pixels
 --bottom: Bottom Side in Pixels
 --rotate: Rotate Image to given angle
+--invert: Invert Colors
 
 
 

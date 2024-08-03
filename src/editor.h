@@ -420,7 +420,9 @@ Image rotate_image(Image image, double angle)
 
 
     rotated = bilinear_interpolation(rotated);
-    rotated = gaussian(rotated, 6, 1.8);
+    int kernel_size = 6;
+    float sigma = 1.8;
+    rotated = gaussian(rotated, kernel_size, sigma);
     rotated = resize(rotated,width, height);
 
 
@@ -428,4 +430,25 @@ Image rotate_image(Image image, double angle)
 
 
     return rotated;
+}
+
+Image invert(Image image)
+{
+    for(int y = 0; y < image.height; y++)
+    {
+        png_bytep row = image.pixels[y];
+        for(int x = 0; x < image.width; x++)
+        {
+            png_bytep px = &(row[x * 4]);
+
+            px[0] = 255 - px[0];
+            px[1] = 255 - px[1];
+            px[2] = 255 - px[2];
+
+
+
+        }
+    }
+
+    return image;
 }
