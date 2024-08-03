@@ -177,12 +177,10 @@ To crop the image from sides, add the following parameters.
 
 
 ```bash
-$ ❯ ./image-edit -i examples/castle.png --crop --left 100  --right 10 --top 30 --bottom 20 -o examples/castle-cropped.png
+$ ./image-edit -i examples/castle.png --crop --left 100  --right 10 --top 30 --bottom 20 -o examples/castle-cropped.png
 ```
 
 Side parameters are optional. It is possible to provide just desired sides.
-
-
 
 
 
@@ -192,6 +190,23 @@ Side parameters are optional. It is possible to provide just desired sides.
 #### Output
 
 ![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-cropped.png)
+
+
+### Rotate Image
+To rotate the image with given angle in degrees, add the following parameters.
+
+
+```bash
+$ ./image-edit -i examples/castle.png --rotate 30 -o examples/rotated.png
+```
+
+
+#### Input
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle.png)
+
+#### Output
+
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-rotated.png)
 
 ## PARAMETERS
 
@@ -216,6 +231,7 @@ Side parameters are optional. It is possible to provide just desired sides.
 --right: Right Side in Pixels
 --top: Top Side in Pixels
 --bottom: Bottom Side in Pixels
+--rotate: Rotate Image to given angle
 
 
 

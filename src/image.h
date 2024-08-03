@@ -77,16 +77,32 @@ Image read_png_file(const char *FILENAME) {
 }
 
 
-Image alloc_image(image_width, image_height){
-  Image new_image;
-  new_image.width = image_width;
-  new_image.height = image_height;
-  new_image.pixels = (png_bytep*) malloc(sizeof(png_bytep) * image_height);
-  for(int y = 0; y < image_height; y++) {
-        new_image.pixels[y] = (png_byte*) malloc(sizeof(png_byte) * image_width * 4 );
+void make_blank(Image image)
+{
+    for (int y = 0; y < image.height; y++) {
+    for (int x = 0; x < image.width; x++) {
+        png_bytep px = &(image.pixels[y][x * 4]);
+        px[0] = 0;
+        px[1] = 0;
+        px[2] = 0;
+        px[3] = 0;
+    }
+}
 
+}
+
+Image alloc_image(image_width, image_height){
+  Image image;
+  image.width = image_width;
+  image.height = image_height;
+  image.pixels = (png_bytep*) malloc(sizeof(png_bytep) * image_height);
+  for(int y = 0; y < image_height; y++) {
+        image.pixels[y] = (png_byte*) malloc(sizeof(png_byte) * image_width * 4 );
   }
-  return new_image;
+
+  make_blank(image);
+
+  return image;
 }
 
 void free_image(Image image)

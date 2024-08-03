@@ -366,73 +366,18 @@ Image crop(Image image, int left, int right, int top, int bottom)
 }
 
 
-Image bilinear_interpolation(Image image)
-{
-    for(int y = 0; y < image.height; y++)
-    {
-        png_bytep row = image.pixels[y];
-        for(int x = 0; x < image.width; x++)
-        {
-            png_bytep px = &(row[x * 4]);
-
-
-            int red = 0;
-            int green = 0;
-            int blue = 0;
-            int alpha = 0;
-            int count = 0;
-            int kernel = 1;
-            if (px[3] == 0)
-            {
-                for(int i=y-kernel; i<=y+kernel; i++)
-                {
-                    for(int j=x-kernel; j<=x+kernel; j++)
-                    {
-                       if (i < 0 || i >= image.height || j < 0 || j >= image.width) continue;
-
-                            png_bytep neighbor_row = image.pixels[i];
-                            png_bytep neighbor_px = &(row[j * 4]);
-
-                            red += neighbor_px[0];
-                            green += neighbor_px[1];
-                            blue += neighbor_px[2];
-                            alpha += neighbor_px[3];
-                            count++;
-
-                    }
-                }
-
-                red = (int) red / count;
-                green = (int) green / count;
-                blue = (int) blue / count;
-                alpha = (int) alpha / count;
-
-                px[0] = red;
-                px[1] = green;
-                px[2] = blue;
-                px[3] = alpha;
-
-
-            }
-
-        }
-
-    }
-    return image;
-}
 
 Image rotate_image(Image image, double angle)
 {
-    // if(angle % 90 != 0) raise("The rotation angle must be multiplication of 90 degrees!");
-
-    // if (angle < 0) angle = 360 - angle;
-
-    // printf("Angle: %d\n", angle);
 
     double radians = angle * M_PI / 180;
     double cos_value =  cos(radians);
     double sin_value = sin(radians);
+    int width = image.width;
+    int height = image.height;
+    const int SCALE = 4;
 
+    image = resize(image, image.width * SCALE, image.height * SCALE);
 
     int new_width = (int)(fabs(image.width * cos_value) + fabs(image.height * sin_value));
     int new_height = (int)(fabs(image.width * sin_value) + fabs(image.height * cos_value));
@@ -449,12 +394,14 @@ Image rotate_image(Image image, double angle)
     for(int y = 0; y < image.height; y++)
     {
         png_bytep row = image.pixels[y];
+
         for(int x = 0; x < image.width; x++)
         {
             int new_x = (int) (new_x0 + (x-x0) * cos_value + (y-y0) * sin_value);
             int new_y = (int) (new_y0 - (x-x0) * sin_value + (y-y0) * cos_value);
 
 
+            if (new_x < 0 || new_x >= new_width || new_y < 0 || new_y >= new_height) continue;
 
             png_bytep rotated_row = rotated.pixels[new_y];
             png_bytep px = &(row[x * 4]);
@@ -471,7 +418,14 @@ Image rotate_image(Image image, double angle)
         }
     }
 
-    Image result = bilinear_interpolation(rotated);
 
-    return result;
+    rotated = bilinear_interpolation(rotated);
+    rotated = gaussian(rotated, 6, 1.8);
+    rotated = resize(rotated,width, height);
+
+
+
+
+
+    return rotated;
 }

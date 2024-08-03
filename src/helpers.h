@@ -89,10 +89,13 @@ void apply_kernel(double**kernel, int KERNEL_SIZE, Image image)
                 }
             }
             png_bytep out_px = output[y] + x * 4;
+
             out_px[0] = (png_byte)(r_sum / kernel_sum) % 255;
             out_px[1] = (png_byte)(g_sum / kernel_sum) % 255;
             out_px[2] = (png_byte)(b_sum / kernel_sum) % 255;
-            out_px[3] = 255;
+
+            int avg = (int) ((int) out_px[0] + out_px[1] + out_px[2])/3;
+            if (avg > 0) out_px[3] = 255;
         }
     }
 
@@ -105,3 +108,68 @@ void apply_kernel(double**kernel, int KERNEL_SIZE, Image image)
 
 
 }
+
+Image bilinear_interpolation(Image image)
+{
+    for(int y = 0; y < image.height; y++)
+    {
+        png_bytep row = image.pixels[y];
+        for(int x = 0; x < image.width; x++)
+        {
+            png_bytep px = &(row[x * 4]);
+
+
+            int red = 0;
+            int green = 0;
+            int blue = 0;
+            int alpha = 0;
+            int count = 0;
+            int kernel = 1;
+
+
+            if (px[3] == 0)
+            {
+                for(int i=y-kernel; i<=y+kernel; i++)
+                {
+                    for(int j=x-kernel; j<=x+kernel; j++)
+                    {
+                       if (i < 0 || i >= image.height || j < 0 || j >= image.width) continue;
+
+                            png_bytep neighbor_row = image.pixels[i];
+                            png_bytep neighbor_px = &(neighbor_row[j * 4]);
+
+
+                            if (neighbor_px[3] == 0) continue;
+
+
+                            red += neighbor_px[0];
+                            green += neighbor_px[1];
+                            blue += neighbor_px[2];
+                            alpha += neighbor_px[3];
+                            count++;
+
+                    }
+                }
+
+
+                if (count < kernel * 8) continue;
+
+                red = (int) red / count;
+                green = (int) green / count;
+                blue = (int) blue / count;
+                alpha = (int) alpha / count;
+
+                px[0] = red;
+                px[1] = green;
+                px[2] = blue;
+                px[3] = alpha;
+
+
+            }
+
+        }
+
+    }
+    return image;
+}
+
