@@ -287,6 +287,8 @@ The above command applies two masks to the image. The first mask removes the col
 --rotate: Rotate Image to given angle
 --invert: Invert Colors
 --border: Add Border
+--mask: Add Mask
+--threshold: Threshold
 
 
 
