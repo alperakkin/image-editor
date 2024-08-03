@@ -22,19 +22,21 @@ void help() {
     printf("-f: Color Filter\n");
     printf("--strength: Filter Strength (Required By: Color Filter)\n");
     printf("--opacity: Opacity\n");
-    printf("--color: Color [Hex Value] (Required By: Color Filter)n");
+    printf("--color: Color [Hex Value]\n");
     printf("-l: Add Image Layer\n");
     printf("--path: New Layer Image Path (Required By: Add Image Layer)\n");
     printf("--pos: Position Of The Image (Required By: Add Image Layer)\n");
     printf("--alpha-mask: Alpha Mask (Required By: Add Image Layer)\n");
     printf("--crop: Crop Image\n");
-    printf("--left: Crop From left (Optional: If not provided left value will be evaluated as 0))\n");
-    printf("--right: Crop From right (Optional: If not provided right value will be evaluated as 0))\n");
-    printf("--top: Crop From top (Optional: If not provided top value will be evaluated as 0))\n");
-    printf("--bottom: Crop From bottom (Optional: If not provided bottom value will be evaluated as 0))\n");
+    printf("--left: Pixels From left (Optional: If not provided left value will be evaluated as 0))\n");
+    printf("--right: Pixels From right (Optional: If not provided right value will be evaluated as 0))\n");
+    printf("--top: Pixels From top (Optional: If not provided top value will be evaluated as 0))\n");
+    printf("--bottom: Pixels From bottom (Optional: If not provided bottom value will be evaluated as 0))\n");
     printf("--rotate: Rotate Image\n");
     printf("--invert: Invert Image\n");
     printf("--border: Add Borders\n");
+    printf("--mask: Mask Color\n");
+    printf("--threshold: Threshold\n");
     printf("\n");
     printf("-------------------------------------------\n\n");
 
@@ -199,6 +201,14 @@ void parse_args(int argc, char *argv[])
         output = add_border(image, color, border_size);
     }
 
+    char* mask_opt = find_argument("--mask", false);
+    if (mask_opt)
+    {
+        char* color = find_argument("--color", true);
+        float threshold = (float) atof(find_argument("--threshold", true));
+        output = mask(image, color, threshold);
+
+    }
 
     OUTPUT_PATH = find_argument("-o", true);
     write_png_file(OUTPUT_PATH, output);

@@ -242,6 +242,25 @@ $ ./image-edit -i examples/castle.png --border 5 --color "#f51a00" -o examples/c
 
 ![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-border.png)
 
+
+### Mask Color
+To apply a color mask , add the following parameters.
+
+
+```bash
+$ ./image-edit -i examples/castle.png  --mask --color "#6a7175"  --threshold 0.65 --mask --color "#255bbb" --threshold 0.35 -o examples/castle-mask.png
+```
+
+The above command applies two masks to the image. The first mask removes the color #6a7175 from the image with a 65% threshold. The second mask removes the color #255bbb with a 35% threshold.
+
+
+#### Input
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle.png)
+
+#### Output
+
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-mask.png)
+
 ## PARAMETERS
 
 -i: Input Image Path

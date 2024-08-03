@@ -484,3 +484,45 @@ Image add_border(Image image, char* color, int size)
 
     return image;
 }
+
+
+Image mask(Image image, char* color, float threshold)
+{
+    int r, g, b;
+
+    char* hex_code = color;
+
+    hex_to_rgb(hex_code, &r, &g, &b);
+
+
+
+    int r_min = (int) (r * threshold);
+    int g_min = (int) (g * threshold);
+    int b_min = (int) (b * threshold);
+
+    int r_max = (int)(r + (255 - r) * (1 - threshold));
+    int g_max = (int)(g + (255 - g) * (1 - threshold));
+    int b_max = (int)(b + (255 - b) * (1 - threshold));
+
+
+    for(int y = 0; y < image.height; y++)
+    {
+        png_bytep row = image.pixels[y];
+
+        for(int x = 0; x < image.width; x++)
+        {
+            png_bytep px = &(row[x * 4]);
+
+            if( px[0] >= r_min && px[0] <= r_max &&
+                px[1] >= g_min && px[1] <= g_max &&
+                px[2] >= b_min && px[2] <= b_max
+            )
+            {
+
+                px[3] = 0;
+            }
+
+        }
+    }
+    return image;
+}

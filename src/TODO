@@ -11,8 +11,8 @@
 [x] Crop
 [x] Rotate
 [x] Invert
-[ ] Add Border
-[ ] Threshold
+[x] Add Border
+[x] Mask Color
 [ ] Edge Detection
 [ ] Template Matching
-[ ] Color Mask
+
