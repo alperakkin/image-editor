@@ -37,6 +37,7 @@ void help() {
     printf("--border: Add Borders\n");
     printf("--mask: Mask Color\n");
     printf("--threshold: Threshold\n");
+    printf("--edge: Edge Detection\n");
     printf("\n");
     printf("-------------------------------------------\n\n");
 
@@ -208,6 +209,12 @@ void parse_args(int argc, char *argv[])
         float threshold = (float) atof(find_argument("--threshold", true));
         output = mask(image, color, threshold);
 
+    }
+
+    char* edge_detection = find_argument("--edge", false);
+    if (edge_detection)
+    {
+        output = edge(image);
     }
 
     OUTPUT_PATH = find_argument("-o", true);

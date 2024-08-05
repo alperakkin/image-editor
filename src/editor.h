@@ -15,8 +15,9 @@ const char* OUTPUT_PATH;
 
 
 
-void grayscale(Image image){
-  for (int y = 0; y < image.height; y++)
+Image grayscale(Image image)
+{
+    for (int y = 0; y < image.height; y++)
     {
         png_bytep row = image.pixels[y];
         for(int x = 0; x < image.width; x++)
@@ -29,7 +30,7 @@ void grayscale(Image image){
         }
     }
 
-  write_png_file(OUTPUT_PATH, image);
+ return image;
 }
 
 
@@ -524,5 +525,168 @@ Image mask(Image image, char* color, float threshold)
 
         }
     }
+    return image;
+}
+
+
+
+Image sobel_filter(Image image, char direction)
+{
+    int sobel_matrix[3][3];
+
+    int sobel_x[3][3] = {
+        {-1, 0, 1},
+        {-2, 0, 2},
+        {-1, 0, 1}
+    };
+
+    int sobel_y[3][3] = {
+        {-1, -2, -1},
+        {0, 0, 0},
+        {1, 2, 1}
+    };
+
+    for (int i=0; i<3; i++)
+    {
+        for (int j=0; j<3; j++)
+        {
+            if (direction == 'x') sobel_matrix[i][j] = sobel_x[i][j];
+            if (direction == 'y') sobel_matrix[i][j] = sobel_y[i][j];
+        }
+    }
+
+
+
+
+
+    Image sobel_image = alloc_image(image.width, image.height);
+
+    for (int y=0; y < image.height; y++)
+    {
+
+        png_bytep sobel_row = sobel_image.pixels[y];
+
+
+        for (int x=0; x < image.width; x++)
+        {
+
+
+            png_bytep sobel_px = &(sobel_row[x * 4]);
+
+
+            for(int sy = -1; sy != 1; sy++)
+            {
+                for(int sx = -1; sx != 1; sx++)
+                {
+                    int posy = sy + y;
+                    int posx = sx + x;
+                    if (posy < 0 || posy > image.height || posx < 0 || posx > image.width) continue;
+                    png_bytep row = image.pixels[posy];
+                    png_bytep px = &(row[posx * 4]);
+
+                    sobel_px[0] = sobel_px[0] +px[0];
+
+                }
+
+            }
+
+
+
+
+        }
+        return sobel_image;
+    }
+
+
+
+
+
+    return image;
+}
+
+Image gradient_direction(Image sobel_x, Image sobel_y)
+{
+    Image grad_image = alloc_image(sobel_x.width, sobel_y.width);
+
+    for (int y=0; y < grad_image.height; y++)
+    {
+
+        png_bytep grad_image_row = grad_image.pixels[y];
+        png_bytep sobel_x_row = sobel_x.pixels[y];
+        png_bytep sobel_y_row = sobel_y.pixels[y];
+
+
+        for (int x=0; x < grad_image.width; x++)
+        {
+
+
+            png_bytep grad_image_px = &(grad_image_row[x * 4]);
+            png_bytep sobel_x_px = &(sobel_x_row[x * 4]);
+            png_bytep sobel_y_px = &(sobel_y_row[x * 4]);
+
+            grad_image_px[0] = atan(sobel_y_px[0]/sobel_x_px[0]);
+
+
+
+
+
+
+
+
+        }
+
+    }
+
+    return grad_image;
+}
+
+
+Image gradient_magnitude(Image sobel_x, Image sobel_y)
+{
+    Image gradient_mag = alloc_image(sobel_x.width, sobel_x.height);
+
+    for (int y=0; y < gradient_mag.height; y++)
+    {
+
+        png_bytep grad_image_row = gradient_mag.pixels[y];
+        png_bytep sobel_x_row = sobel_x.pixels[y];
+        png_bytep sobel_y_row = sobel_y.pixels[y];
+
+
+        for (int x=0; x < gradient_mag.width; x++)
+        {
+
+
+            png_bytep grad_image_px = &(grad_image_row[x * 4]);
+            png_bytep sobel_x_px = &(sobel_x_row[x * 4]);
+            png_bytep sobel_y_px = &(sobel_y_row[x * 4]);
+            double sq = (sobel_x_px[0] * sobel_x_px[0]) + (sobel_y_px[0] + sobel_y_px[0]);
+            grad_image_px[0] = sqrt(sq);
+
+        }
+
+    }
+    return gradient_mag;
+}
+
+
+Image gradient_vector(Image image)
+{
+    Image blurred = gaussian(image, 3, 1.05);
+    Image gray_image = grayscale(blurred);
+    Image sobel_x = sobel_filter(gray_image, 'x');
+    Image sobel_y = sobel_filter(gray_image, 'y');
+    Image gradient_mag = gradient_magnitude(sobel_x, sobel_y);
+    Image gradient_dir = gradient_direction(sobel_x, sobel_y);
+
+
+    return image;
+}
+
+
+Image edge(Image image)
+{
+
+
     return image;
 }
