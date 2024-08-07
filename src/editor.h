@@ -669,8 +669,183 @@ Image gradient_magnitude(Image sobel_x, Image sobel_y)
     return gradient_mag;
 }
 
+Image non_maximum_suppression(Image gradient_mag, Image gradient_dir)
+{
+    Image suppr_img = alloc_image(gradient_mag.width, gradient_mag.height);
+    for (int y=0; y < gradient_mag.height; y++)
+    {
 
-Image gradient_vector(Image image)
+        png_bytep grad_mag_row = gradient_mag.pixels[y];
+        png_bytep grad_dir_row = gradient_mag.pixels[y];
+        png_bytep suppr_row = suppr_img.pixels[y];
+
+
+
+        for (int x=0; x < gradient_mag.width; x++)
+        {
+
+
+            png_bytep grad_mag_px = &(grad_mag_row[x * 4]);
+            png_bytep grad_dir_px = &(grad_dir_row[x * 4]);
+            png_bytep suppr_px = &(suppr_row[x * 4]);
+
+            double angle = grad_dir_px[0];
+            if (angle > M_PI) angle -= M_PI;
+
+            if (angle >=0 && angle < M_PI/8) angle = 0;
+            if (angle >=M_PI/8 && angle < M_PI/4) angle = (int) M_PI/4;
+            if (angle >=M_PI/4 && angle < M_PI/2) angle = (int) M_PI/2;
+            if (angle >=M_PI/2 && angle < 3 * M_PI / 4) angle = (int) 3 * M_PI /4;
+            if (angle >=3 * M_PI / 4 && angle < M_PI) angle = (int) M_PI;
+
+            if (angle == 0 || angle == M_PI)
+            {
+                // Check left & check right
+                int left = 0;
+                int right = 0;
+                if (x-1 >= 0)
+                {
+                    png_bytep left_pix = &(grad_mag_row[(x-1) * 4]);
+                    left = left_pix[0];
+                }
+                if (x+1 < gradient_mag.width)
+                {
+                    png_bytep right_pix = &(grad_mag_row[(x-1) * 4]);
+                    right = right_pix[0];
+                }
+
+                if (grad_mag_px[0] > left && grad_mag_px[0] > right)
+                {
+                    suppr_px[0] = 255;
+                    suppr_px[1] = 255;
+                    suppr_px[2] = 255;
+                    suppr_px[3] = 255;
+                }
+                else
+                {
+                    suppr_px[0] = 0;
+                    suppr_px[1] = 0;
+                    suppr_px[2] = 0;
+                    suppr_px[3] = 255;
+                }
+            }
+
+            if (angle == (int) M_PI/4)
+            {
+                int bottom_left = 0;
+                int top_right = 0;
+                if (y-1 >= 0 && x-1 >= 0)
+                {
+                    png_bytep bottom_row = gradient_mag.pixels[y-1];
+                    png_bytep bottom_left_pix = &(bottom_row[(x-1) * 4]);
+                    bottom_left = bottom_left_pix[0];
+
+                }
+                if (y+1 < gradient_mag.height && x+1 < gradient_mag.width)
+                {
+                    png_bytep top_row = gradient_mag.pixels[y+1];
+                    png_bytep top_right_pix = &(top_row[(x+1) * 4]);
+                    top_right = top_right_pix[0];
+
+                }
+
+                if (grad_mag_px[0] > bottom_left && grad_mag_px[0] > top_right)
+                {
+                    suppr_px[0] = 255;
+                    suppr_px[1] = 255;
+                    suppr_px[2] = 255;
+                    suppr_px[3] = 255;
+                }
+                else
+                {
+                    suppr_px[0] = 0;
+                    suppr_px[1] = 0;
+                    suppr_px[2] = 0;
+                    suppr_px[3] = 255;
+                }
+            }
+
+            if (angle == (int) 3* M_PI/4)
+            {
+                int bottom_right = 0;
+                int top_left = 0;
+                if (y-1 >= 0 && x+1 < gradient_mag.width)
+                {
+                    png_bytep bottom_row = gradient_mag.pixels[y-1];
+                    png_bytep bottom_right_pix = &(bottom_row[(x+1) * 4]);
+                    bottom_right = bottom_right_pix[0];
+
+                }
+                if (y+1 < gradient_mag.height && x-1 >= 0)
+                {
+                    png_bytep top_row = gradient_mag.pixels[y+1];
+                    png_bytep top_left_pix = &(top_row[(x-1) * 4]);
+                    top_left = top_left_pix[0];
+
+                }
+
+                if (grad_mag_px[0] > bottom_right && grad_mag_px[0] > top_left)
+                {
+                    suppr_px[0] = 255;
+                    suppr_px[1] = 255;
+                    suppr_px[2] = 255;
+                    suppr_px[3] = 255;
+                }
+                else
+                {
+                    suppr_px[0] = 0;
+                    suppr_px[1] = 0;
+                    suppr_px[2] = 0;
+                    suppr_px[3] = 255;
+                }
+
+            }
+
+            if (angle == (int) M_PI/2)
+            {
+                int top = 0;
+                int bottom = 0;
+                if (y-1 >= 0)
+                {
+                    png_bytep bottom_row = gradient_mag.pixels[y-1];
+                    png_bytep bottom_pix = &(bottom_row[x * 4]);
+                    bottom = bottom_pix[0];
+                }
+                if (y+1 < gradient_mag.height)
+                {
+                    png_bytep top_row = gradient_mag.pixels[y+1];
+                    png_bytep top_pix = &(top_row[x * 4]);
+                    top = top_pix[0];
+                }
+
+                if (grad_mag_px[0] > bottom && grad_mag_px[0] > top)
+                {
+                    suppr_px[0] = 255;
+                    suppr_px[1] = 255;
+                    suppr_px[2] = 255;
+                    suppr_px[3] = 255;
+                }
+                else
+                {
+                    suppr_px[0] = 0;
+                    suppr_px[1] = 0;
+                    suppr_px[2] = 0;
+                    suppr_px[3] = 255;
+                }
+
+            }
+
+
+        }
+
+    }
+
+    return suppr_img;
+
+}
+
+
+Image evaluate_edge(Image image)
 {
     Image blurred = gaussian(image, 3, 1.05);
     Image gray_image = grayscale(blurred);
@@ -678,6 +853,7 @@ Image gradient_vector(Image image)
     Image sobel_y = sobel_filter(gray_image, 'y');
     Image gradient_mag = gradient_magnitude(sobel_x, sobel_y);
     Image gradient_dir = gradient_direction(sobel_x, sobel_y);
+    Image suppr = non_maximum_suppression(gradient_mag, gradient_dir);
 
 
     return image;
@@ -686,7 +862,6 @@ Image gradient_vector(Image image)
 
 Image edge(Image image)
 {
-
 
     return image;
 }
