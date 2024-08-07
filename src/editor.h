@@ -716,17 +716,13 @@ Image non_maximum_suppression(Image gradient_mag, Image gradient_dir)
 
                 if (grad_mag_px[0] > left && grad_mag_px[0] > right)
                 {
-                    suppr_px[0] = 255;
-                    suppr_px[1] = 255;
-                    suppr_px[2] = 255;
-                    suppr_px[3] = 255;
+                    suppr_px[0] = grad_mag_px[0];
+
                 }
                 else
                 {
                     suppr_px[0] = 0;
-                    suppr_px[1] = 0;
-                    suppr_px[2] = 0;
-                    suppr_px[3] = 255;
+
                 }
             }
 
@@ -751,17 +747,13 @@ Image non_maximum_suppression(Image gradient_mag, Image gradient_dir)
 
                 if (grad_mag_px[0] > bottom_left && grad_mag_px[0] > top_right)
                 {
-                    suppr_px[0] = 255;
-                    suppr_px[1] = 255;
-                    suppr_px[2] = 255;
-                    suppr_px[3] = 255;
+                    suppr_px[0] = grad_mag_px[0];
+
                 }
                 else
                 {
                     suppr_px[0] = 0;
-                    suppr_px[1] = 0;
-                    suppr_px[2] = 0;
-                    suppr_px[3] = 255;
+
                 }
             }
 
@@ -786,17 +778,13 @@ Image non_maximum_suppression(Image gradient_mag, Image gradient_dir)
 
                 if (grad_mag_px[0] > bottom_right && grad_mag_px[0] > top_left)
                 {
-                    suppr_px[0] = 255;
-                    suppr_px[1] = 255;
-                    suppr_px[2] = 255;
-                    suppr_px[3] = 255;
+                    suppr_px[0] = grad_mag_px[0];
+
                 }
                 else
                 {
                     suppr_px[0] = 0;
-                    suppr_px[1] = 0;
-                    suppr_px[2] = 0;
-                    suppr_px[3] = 255;
+
                 }
 
             }
@@ -820,17 +808,13 @@ Image non_maximum_suppression(Image gradient_mag, Image gradient_dir)
 
                 if (grad_mag_px[0] > bottom && grad_mag_px[0] > top)
                 {
-                    suppr_px[0] = 255;
-                    suppr_px[1] = 255;
-                    suppr_px[2] = 255;
-                    suppr_px[3] = 255;
+                    suppr_px[0] = grad_mag_px[0];
+
                 }
                 else
                 {
                     suppr_px[0] = 0;
-                    suppr_px[1] = 0;
-                    suppr_px[2] = 0;
-                    suppr_px[3] = 255;
+
                 }
 
             }
@@ -844,8 +828,27 @@ Image non_maximum_suppression(Image gradient_mag, Image gradient_dir)
 
 }
 
+Image double_threshold(Image image, int high, int low)
+{
 
-Image evaluate_edge(Image image)
+    Image result = alloc_image(image.width, image.height);
+    for (int y=0; y < image.height; y++)
+    {
+
+        png_bytep row = image.pixels[y];
+
+        for (int x=0; x < image.width; x++)
+        {
+            png_bytep px = &(row[x * 4]);
+            // check for threshold values
+        }
+    }
+
+    return result;
+}
+
+
+Image edge(Image image, int high_threshold, int low_threshold)
 {
     Image blurred = gaussian(image, 3, 1.05);
     Image gray_image = grayscale(blurred);
@@ -854,14 +857,7 @@ Image evaluate_edge(Image image)
     Image gradient_mag = gradient_magnitude(sobel_x, sobel_y);
     Image gradient_dir = gradient_direction(sobel_x, sobel_y);
     Image suppr = non_maximum_suppression(gradient_mag, gradient_dir);
+    Image result = double_threshold(suppr, high_threshold, low_threshold);
 
-
-    return image;
-}
-
-
-Image edge(Image image)
-{
-
-    return image;
+    return result;
 }
