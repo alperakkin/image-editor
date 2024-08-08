@@ -830,8 +830,6 @@ Image non_maximum_suppression(Image gradient_mag, Image gradient_dir)
 
 Image double_threshold(Image image, int high, int low)
 {
-
-    Image result = alloc_image(image.width, image.height);
     for (int y=0; y < image.height; y++)
     {
 
@@ -840,11 +838,55 @@ Image double_threshold(Image image, int high, int low)
         for (int x=0; x < image.width; x++)
         {
             png_bytep px = &(row[x * 4]);
-            // check for threshold values
+
+            if (px[0] >= high) {px[0] = 255; px[3]=255;}
+            if (px[0] >= low && px[0] < high) {px[0] = 128, px[3]=255;};
+            if (px[0] < low) {px[0] = 0; px[3]=255;}
+
         }
     }
 
-    return result;
+    return image;
+}
+
+Image edge_tracking(Image image)
+{
+    for (int y=0; y < image.height; y++)
+    {
+
+        png_bytep row = image.pixels[y];
+
+        for (int x=0; x < image.width; x++)
+        {
+            png_bytep px = &(row[x * 4]);
+
+            if (px[0] == 128)
+            {
+
+
+                for(int sy = -1; sy != 1; sy++)
+                {
+                    for(int sx = -1; sx != 1; sx++)
+                    {
+                        int posy = sy + y;
+                        int posx = sx + x;
+                        if (posy < 0 || posy > image.height || posx < 0 || posx > image.width) continue;
+                        png_bytep e_row = image.pixels[posy];
+                        png_bytep e_px = &(e_row[posx * 4]);
+
+                        if(e_px[0] ==255) px[0] = 255;
+
+
+                    }
+
+                }
+            }
+            printf("%d ", px[0]);
+        }
+            printf("\n");
+    }
+
+    return image;
 }
 
 
@@ -857,7 +899,8 @@ Image edge(Image image, int high_threshold, int low_threshold)
     Image gradient_mag = gradient_magnitude(sobel_x, sobel_y);
     Image gradient_dir = gradient_direction(sobel_x, sobel_y);
     Image suppr = non_maximum_suppression(gradient_mag, gradient_dir);
-    Image result = double_threshold(suppr, high_threshold, low_threshold);
+    Image dbl_thresh = double_threshold(suppr, high_threshold, low_threshold);
+    Image result = edge_tracking(dbl_thresh);
 
     return result;
 }
