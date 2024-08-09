@@ -529,8 +529,23 @@ Image mask(Image image, char* color, float threshold)
 }
 
 
+int** alloc_matrix(int width, int height)
+{
+    int** rows = malloc(height * sizeof(int*));
+    for (int i = 0; i < height; i++)
+    {
+        rows[i] = malloc(width * sizeof(int));
 
-Image sobel_filter(Image image, char direction)
+        for(int j = 0; j < width; j++)
+        {
+            rows[i][j] = 0;
+        }
+    }
+    return rows;
+}
+
+
+int** sobel_filter(Image image, char direction)
 {
     int sobel_matrix[3][3];
 
@@ -559,19 +574,16 @@ Image sobel_filter(Image image, char direction)
 
 
 
-    Image sobel_image = alloc_image(image.width, image.height);
+   int** sobel_filter_matrix = alloc_matrix(image.width, image.height);
 
     for (int y=0; y < image.height; y++)
     {
 
-        png_bytep sobel_row = sobel_image.pixels[y];
+        int* sobel_row = sobel_filter_matrix[y];
 
 
         for (int x=0; x < image.width; x++)
         {
-
-
-            png_bytep sobel_px = &(sobel_row[x * 4]);
 
 
             for(int sy = -1; sy != 1; sy++)
@@ -584,7 +596,8 @@ Image sobel_filter(Image image, char direction)
                     png_bytep row = image.pixels[posy];
                     png_bytep px = &(row[posx * 4]);
 
-                    sobel_px[0] = sobel_px[0] +px[0];
+                    sobel_filter_matrix[y][x] = sobel_filter_matrix[y][x] +(px[0] * sobel_matrix[posy%3][posx%3]);
+
 
                 }
 
@@ -594,104 +607,66 @@ Image sobel_filter(Image image, char direction)
 
 
         }
-        return sobel_image;
+
     }
 
 
 
 
 
-    return image;
+    return sobel_filter_matrix;
 }
 
-Image gradient_direction(Image sobel_x, Image sobel_y)
+int** gradient_direction(int** sobel_x, int** sobel_y, int width, int height)
 {
-    Image grad_image = alloc_image(sobel_x.width, sobel_y.width);
+    int** gradient_matrix = alloc_matrix(width, height);
 
-    for (int y=0; y < grad_image.height; y++)
+    for (int y=0; y < height; y++)
     {
 
-        png_bytep grad_image_row = grad_image.pixels[y];
-        png_bytep sobel_x_row = sobel_x.pixels[y];
-        png_bytep sobel_y_row = sobel_y.pixels[y];
-
-
-        for (int x=0; x < grad_image.width; x++)
+        for (int x=0; x < width; x++)
         {
-
-
-            png_bytep grad_image_px = &(grad_image_row[x * 4]);
-            png_bytep sobel_x_px = &(sobel_x_row[x * 4]);
-            png_bytep sobel_y_px = &(sobel_y_row[x * 4]);
-
-            grad_image_px[0] = atan(sobel_y_px[0]/sobel_x_px[0]);
-
-
-
-
-
-
-
-
+            gradient_matrix[y][x] = atan2(sobel_y[y][x], sobel_x[y][x]);
         }
 
     }
 
-    return grad_image;
+    return gradient_matrix;
 }
 
 
-Image gradient_magnitude(Image sobel_x, Image sobel_y)
+int** gradient_magnitude(int** sobel_x, int** sobel_y, int width, int height)
 {
-    Image gradient_mag = alloc_image(sobel_x.width, sobel_x.height);
+    int** gradient_matrix = alloc_matrix(width, height);
 
-    for (int y=0; y < gradient_mag.height; y++)
+    for (int y=0; y < height; y++)
     {
 
-        png_bytep grad_image_row = gradient_mag.pixels[y];
-        png_bytep sobel_x_row = sobel_x.pixels[y];
-        png_bytep sobel_y_row = sobel_y.pixels[y];
-
-
-        for (int x=0; x < gradient_mag.width; x++)
+        for (int x=0; x < width; x++)
         {
 
-
-            png_bytep grad_image_px = &(grad_image_row[x * 4]);
-            png_bytep sobel_x_px = &(sobel_x_row[x * 4]);
-            png_bytep sobel_y_px = &(sobel_y_row[x * 4]);
-            double sq = (sobel_x_px[0] * sobel_x_px[0]) + (sobel_y_px[0] + sobel_y_px[0]);
-            grad_image_px[0] = sqrt(sq);
+            double sq = (sobel_x[y][x] * sobel_x[y][x]) + (sobel_y[y][x] * sobel_y[y][x]);
+            gradient_matrix[y][x] = sqrt(sq);
 
         }
 
     }
-    return gradient_mag;
+    return gradient_matrix;
 }
 
-Image non_maximum_suppression(Image gradient_mag, Image gradient_dir)
+int** non_maximum_suppression(int** gradient_mag, int** gradient_dir, int width, int height)
 {
-    Image suppr_img = alloc_image(gradient_mag.width, gradient_mag.height);
-    for (int y=0; y < gradient_mag.height; y++)
+    int** suppr_matrix = alloc_matrix(width, height);
+    for (int y=0; y < height; y++)
     {
 
-        png_bytep grad_mag_row = gradient_mag.pixels[y];
-        png_bytep grad_dir_row = gradient_mag.pixels[y];
-        png_bytep suppr_row = suppr_img.pixels[y];
-
-
-
-        for (int x=0; x < gradient_mag.width; x++)
+        for (int x=0; x < width; x++)
         {
 
 
-            png_bytep grad_mag_px = &(grad_mag_row[x * 4]);
-            png_bytep grad_dir_px = &(grad_dir_row[x * 4]);
-            png_bytep suppr_px = &(suppr_row[x * 4]);
+            double angle = gradient_dir[y][x];
 
-            double angle = grad_dir_px[0];
             if (angle > M_PI) angle -= M_PI;
-
             if (angle >=0 && angle < M_PI/8) angle = 0;
             if (angle >=M_PI/8 && angle < M_PI/4) angle = (int) M_PI/4;
             if (angle >=M_PI/4 && angle < M_PI/2) angle = (int) M_PI/2;
@@ -700,28 +675,26 @@ Image non_maximum_suppression(Image gradient_mag, Image gradient_dir)
 
             if (angle == 0 || angle == M_PI)
             {
-                // Check left & check right
+
                 int left = 0;
                 int right = 0;
                 if (x-1 >= 0)
                 {
-                    png_bytep left_pix = &(grad_mag_row[(x-1) * 4]);
-                    left = left_pix[0];
+                    left = gradient_mag[y][x-1];
                 }
-                if (x+1 < gradient_mag.width)
+                if (x+1 < width)
                 {
-                    png_bytep right_pix = &(grad_mag_row[(x-1) * 4]);
-                    right = right_pix[0];
+                    right = gradient_mag[y][x+1];
                 }
 
-                if (grad_mag_px[0] > left && grad_mag_px[0] > right)
+                if (gradient_mag[y][x] > left && gradient_mag[y][x] > right)
                 {
-                    suppr_px[0] = grad_mag_px[0];
+                    suppr_matrix[y][x]= gradient_mag[y][x];
 
                 }
                 else
                 {
-                    suppr_px[0] = 0;
+                    suppr_matrix[y][x] = 0;
 
                 }
             }
@@ -732,27 +705,24 @@ Image non_maximum_suppression(Image gradient_mag, Image gradient_dir)
                 int top_right = 0;
                 if (y-1 >= 0 && x-1 >= 0)
                 {
-                    png_bytep bottom_row = gradient_mag.pixels[y-1];
-                    png_bytep bottom_left_pix = &(bottom_row[(x-1) * 4]);
-                    bottom_left = bottom_left_pix[0];
+
+                    bottom_left = gradient_mag[y-1][x-1];
 
                 }
-                if (y+1 < gradient_mag.height && x+1 < gradient_mag.width)
+                if (y+1 < height && x+1 < width)
                 {
-                    png_bytep top_row = gradient_mag.pixels[y+1];
-                    png_bytep top_right_pix = &(top_row[(x+1) * 4]);
-                    top_right = top_right_pix[0];
+                    top_right = gradient_mag[y+1][x+1];
 
                 }
 
-                if (grad_mag_px[0] > bottom_left && grad_mag_px[0] > top_right)
+                if (gradient_mag[y][x] > bottom_left && gradient_mag[y][x] > top_right)
                 {
-                    suppr_px[0] = grad_mag_px[0];
+                    suppr_matrix[y][x] = gradient_mag[y][x];
 
                 }
                 else
                 {
-                    suppr_px[0] = 0;
+                    suppr_matrix[y][x] = 0;
 
                 }
             }
@@ -761,30 +731,23 @@ Image non_maximum_suppression(Image gradient_mag, Image gradient_dir)
             {
                 int bottom_right = 0;
                 int top_left = 0;
-                if (y-1 >= 0 && x+1 < gradient_mag.width)
+                if (y-1 >= 0 && x+1 < width)
                 {
-                    png_bytep bottom_row = gradient_mag.pixels[y-1];
-                    png_bytep bottom_right_pix = &(bottom_row[(x+1) * 4]);
-                    bottom_right = bottom_right_pix[0];
-
+                    bottom_right = gradient_mag[y-1][x+1];
                 }
-                if (y+1 < gradient_mag.height && x-1 >= 0)
+                if (y+1 < height && x-1 >= 0)
                 {
-                    png_bytep top_row = gradient_mag.pixels[y+1];
-                    png_bytep top_left_pix = &(top_row[(x-1) * 4]);
-                    top_left = top_left_pix[0];
-
+                    top_left = gradient_mag[y+1][x-1];
                 }
 
-                if (grad_mag_px[0] > bottom_right && grad_mag_px[0] > top_left)
+                if (gradient_mag[y][x] > bottom_right && gradient_mag[y][x] > top_left)
                 {
-                    suppr_px[0] = grad_mag_px[0];
+                    suppr_matrix[y][x] = gradient_mag[y][x];
 
                 }
                 else
                 {
-                    suppr_px[0] = 0;
-
+                    suppr_matrix[y][x] = 0;
                 }
 
             }
@@ -795,25 +758,23 @@ Image non_maximum_suppression(Image gradient_mag, Image gradient_dir)
                 int bottom = 0;
                 if (y-1 >= 0)
                 {
-                    png_bytep bottom_row = gradient_mag.pixels[y-1];
-                    png_bytep bottom_pix = &(bottom_row[x * 4]);
-                    bottom = bottom_pix[0];
+
+                    bottom = gradient_mag[y-1][x];
                 }
-                if (y+1 < gradient_mag.height)
+                if (y+1 < height)
                 {
-                    png_bytep top_row = gradient_mag.pixels[y+1];
-                    png_bytep top_pix = &(top_row[x * 4]);
-                    top = top_pix[0];
+
+                    top = gradient_mag[y+1][x];
                 }
 
-                if (grad_mag_px[0] > bottom && grad_mag_px[0] > top)
+                if (gradient_mag[y][x] > bottom && gradient_mag[y][x]> top)
                 {
-                    suppr_px[0] = grad_mag_px[0];
+                    suppr_matrix[y][x] = gradient_mag[y][x];
 
                 }
                 else
                 {
-                    suppr_px[0] = 0;
+                    suppr_matrix[y][x] = 0;
 
                 }
 
@@ -824,83 +785,83 @@ Image non_maximum_suppression(Image gradient_mag, Image gradient_dir)
 
     }
 
-    return suppr_img;
+    return suppr_matrix;
 
 }
 
-Image double_threshold(Image image, int high, int low)
-{
-    for (int y=0; y < image.height; y++)
-    {
+// Image double_threshold(Image image, int high, int low)
+// {
+//     for (int y=0; y < image.height; y++)
+//     {
 
-        png_bytep row = image.pixels[y];
+//         png_bytep row = image.pixels[y];
 
-        for (int x=0; x < image.width; x++)
-        {
-            png_bytep px = &(row[x * 4]);
+//         for (int x=0; x < image.width; x++)
+//         {
+//             png_bytep px = &(row[x * 4]);
 
-            if (px[0] >= high) {px[0] = 255; px[3]=255;}
-            if (px[0] >= low && px[0] < high) {px[0] = 128, px[3]=255;};
-            if (px[0] < low) {px[0] = 0; px[3]=255;}
+//             if (px[0] >= high) {px[0] = 255; px[3]=255;}
+//             if (px[0] >= low && px[0] < high) {px[0] = 128, px[3]=255;};
+//             if (px[0] < low) {px[0] = 0; px[3]=255;}
 
-        }
-    }
+//         }
+//     }
 
-    return image;
-}
+//     return image;
+// }
 
-Image edge_tracking(Image image)
-{
-    for (int y=0; y < image.height; y++)
-    {
+// Image edge_tracking(Image image)
+// {
+//     for (int y=0; y < image.height; y++)
+//     {
 
-        png_bytep row = image.pixels[y];
+//         png_bytep row = image.pixels[y];
 
-        for (int x=0; x < image.width; x++)
-        {
-            png_bytep px = &(row[x * 4]);
+//         for (int x=0; x < image.width; x++)
+//         {
+//             png_bytep px = &(row[x * 4]);
 
-            if (px[0] == 128)
-            {
-
-
-                for(int sy = -1; sy != 1; sy++)
-                {
-                    for(int sx = -1; sx != 1; sx++)
-                    {
-                        int posy = sy + y;
-                        int posx = sx + x;
-                        if (posy < 0 || posy > image.height || posx < 0 || posx > image.width) continue;
-                        png_bytep e_row = image.pixels[posy];
-                        png_bytep e_px = &(e_row[posx * 4]);
-
-                        if(e_px[0] ==255) px[0] = 255;
+//             if (px[0] == 128)
+//             {
 
 
-                    }
+//                 for(int sy = -1; sy != 1; sy++)
+//                 {
+//                     for(int sx = -1; sx != 1; sx++)
+//                     {
+//                         int posy = sy + y;
+//                         int posx = sx + x;
+//                         if (posy < 0 || posy > image.height || posx < 0 || posx > image.width) continue;
+//                         png_bytep e_row = image.pixels[posy];
+//                         png_bytep e_px = &(e_row[posx * 4]);
 
-                }
-            }
-            printf("%d ", px[0]);
-        }
-            printf("\n");
-    }
+//                         if(e_px[0] ==255) px[0] = 255;
 
-    return image;
-}
+
+//                     }
+
+//                 }
+//             }
+//             printf("%d ", px[0]);
+//         }
+//             printf("\n");
+//     }
+
+//     return image;
+// }
 
 
 Image edge(Image image, int high_threshold, int low_threshold)
 {
     Image blurred = gaussian(image, 3, 1.05);
     Image gray_image = grayscale(blurred);
-    Image sobel_x = sobel_filter(gray_image, 'x');
-    Image sobel_y = sobel_filter(gray_image, 'y');
-    Image gradient_mag = gradient_magnitude(sobel_x, sobel_y);
-    Image gradient_dir = gradient_direction(sobel_x, sobel_y);
-    Image suppr = non_maximum_suppression(gradient_mag, gradient_dir);
-    Image dbl_thresh = double_threshold(suppr, high_threshold, low_threshold);
-    Image result = edge_tracking(dbl_thresh);
+    int** sobel_x = sobel_filter(gray_image, 'x');
+    int** sobel_y = sobel_filter(gray_image, 'y');
+    int** gradient_dir = gradient_direction(sobel_x, sobel_y, image.width, image.height);
+    int** gradient_mag = gradient_magnitude(sobel_x, sobel_y, image.width, image.height);
+    // Image suppr = non_maximum_suppression(gradient_mag, gradient_dir);
+    // Image dbl_thresh = double_threshold(suppr, high_threshold, low_threshold);
+    // Image result = edge_tracking(dbl_thresh);
 
-    return result;
+    return gray_image;
 }
