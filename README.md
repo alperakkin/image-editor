@@ -261,6 +261,25 @@ The above command applies two masks to the image. The first mask removes the col
 
 ![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-mask.png)
 
+
+### Edge Detection
+To detect the edges in the image , add the following parameters.
+
+
+```bash
+$  ./image-edit -i examples/castle.png --edge --threshold --low 200 --high 250 -o examples/castle-edge.png
+```
+
+Fine tune your image with low & high thresholds to get a better result.
+
+
+#### Input
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle.png)
+
+#### Output
+
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-mask.png)
+
 ## PARAMETERS
 
 -i: Input Image Path
@@ -289,6 +308,9 @@ The above command applies two masks to the image. The first mask removes the col
 --border: Add Border
 --mask: Add Mask
 --threshold: Threshold
+--edge: Edge Detection
+--low: Low Key
+--high: High Key
 
 
 
