@@ -278,7 +278,7 @@ Fine tune your image with low & high thresholds to get a better result.
 
 #### Output
 
-![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-mask.png)
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-edge.png)
 
 ## PARAMETERS
 
