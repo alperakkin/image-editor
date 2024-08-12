@@ -244,11 +244,11 @@ void histogram(Image image)
 Image filter(Image image, char* color, float strength)
 {
 
-    int r, g, b;
+
 
     char* hex_code = color;
 
-    hex_to_rgb(hex_code, &r, &g, &b);
+    Color RGB_color = hex_to_rgb(hex_code);
 
     if (strength > 1.0) strength = 1.0;
 
@@ -259,9 +259,9 @@ Image filter(Image image, char* color, float strength)
         {
             png_bytep px = &(row[x * 4]);
 
-            px[0] = (int) (strength * r + (1-strength) * px[0]);
-            px[1] = (int) (strength * g + (1-strength) * px[1]);
-            px[2] = (int) (strength * b + (1-strength) * px[2]);
+            px[0] = (int) (strength * RGB_color.R + (1-strength) * px[0]);
+            px[1] = (int) (strength * RGB_color.G + (1-strength) * px[1]);
+            px[2] = (int) (strength * RGB_color.B + (1-strength) * px[2]);
 
         }
     }
@@ -452,11 +452,9 @@ Image invert(Image image)
 Image add_border(Image image, char* color, int size)
 {
 
-    int r, g, b;
 
-    char* hex_code = color;
 
-    hex_to_rgb(hex_code, &r, &g, &b);
+    Color color_rgb = hex_to_rgb(color);
 
     for(int y = 0; y < image.height; y++)
     {
@@ -469,9 +467,9 @@ Image add_border(Image image, char* color, int size)
             if (x < size || x > (image.width - size) ||
                 y < size || y > (image.height - size))
                 {
-                    px[0] = r;
-                    px[1] = g;
-                    px[2] = b;
+                    px[0] = color_rgb.R;
+                    px[1] = color_rgb.G;
+                    px[2] = color_rgb.B;
 
                 }
 
@@ -484,21 +482,19 @@ Image add_border(Image image, char* color, int size)
 
 Image mask(Image image, char* color, float threshold)
 {
-    int r, g, b;
 
-    char* hex_code = color;
 
-    hex_to_rgb(hex_code, &r, &g, &b);
+    Color color_rgb = hex_to_rgb(color);
 
 
 
-    int r_min = (int) (r * threshold);
-    int g_min = (int) (g * threshold);
-    int b_min = (int) (b * threshold);
+    int r_min = (int) (color_rgb.R * threshold);
+    int g_min = (int) (color_rgb.G * threshold);
+    int b_min = (int) (color_rgb.B * threshold);
 
-    int r_max = (int)(r + (255 - r) * (1 - threshold));
-    int g_max = (int)(g + (255 - g) * (1 - threshold));
-    int b_max = (int)(b + (255 - b) * (1 - threshold));
+    int r_max = (int)(color_rgb.R + (255 - color_rgb.R) * (1 - threshold));
+    int g_max = (int)(color_rgb.G + (255 - color_rgb.G) * (1 - threshold));
+    int b_max = (int)(color_rgb.B + (255 - color_rgb.B) * (1 - threshold));
 
 
     for(int y = 0; y < image.height; y++)
@@ -596,4 +592,35 @@ void match_template(Image image, Image template, float threshold)
 
   }
 
+}
+
+void check_color(Image image, char *color, float threshold)
+{
+
+    Color color_rgb = hex_to_rgb(color);
+    int total_matches = 0;
+    char *state;
+
+    if(strlen(color) < 9) color_rgb.A = 255;
+
+    for (int y=0; y<image.height; y++)
+    {
+        png_bytep row = image.pixels[y];
+
+        for (int x=0; x<image.width; x++)
+        {
+            png_bytep px = &(row[x * 4]);
+
+            if (
+                px[0] >= (int) color_rgb.R*threshold && px[0] <= color_rgb.R &&
+                px[1] >= (int) color_rgb.B*threshold && px[0] <= color_rgb.B &&
+                px[2] >= (int) color_rgb.G*threshold && px[0] <= color_rgb.G &&
+                px[3] >= (int) color_rgb.A*threshold && px[0] <= color_rgb.A
+
+            ) total_matches++;
+        }
+    }
+    float ratio =   (float) total_matches / (float) (image.width * image.height);
+
+    printf("[Color: %s Fill Ratio: %f %%]\n", color, ratio*10);
 }

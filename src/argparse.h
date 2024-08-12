@@ -231,8 +231,15 @@ void parse_args(int argc, char *argv[])
 
         match_template(image, template_img, threshold);
 
-
     }
+
+    char *color_val = find_argument("--check-color", false);
+    if (color_val)
+    {
+        float threshold = (float) atof(find_argument("--threshold", true));
+        check_color(image, color_val, threshold);
+    }
+
 
     OUTPUT_PATH = find_argument("-o", false);
     if (OUTPUT_PATH) write_png_file(OUTPUT_PATH, output);

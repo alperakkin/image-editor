@@ -1,5 +1,20 @@
-#define HISTOGRAM_LENGTH 25
 #include <ctype.h>
+
+#define HISTOGRAM_LENGTH 25
+
+
+typedef struct {
+  int width;
+  int height;
+  png_byte color_type;
+  png_byte bit_depth;
+  png_bytep *pixels;
+} Image;
+
+
+typedef struct {
+    unsigned char R, G, B, A;
+} Color;
 
 typedef struct {
     char* name;
@@ -110,15 +125,30 @@ void raise_error(char* message)
     exit(1);
 }
 
-void hex_to_rgb(char* hex_code, int* r, int* g, int* b)
+Color hex_to_rgb(char* hex_code)
 {
+    Color color = {
+        .R=0,
+        .G=0,
+        .B=0,
+        .A=0
+    };
 
     if (hex_code == NULL || strlen(hex_code) < 7) raise_error("Invalid hex code.");
 
     if (hex_code[0] == '#') hex_code++;
 
-    if (sscanf(hex_code, "%02x%02x%02x", r, g, b) != 3) raise_error("Failed to parse hex code.\n");
+    if (strlen(hex_code)==6)
+    {
+        if (sscanf(hex_code, "%02hhx%02hhx%02hhx", &color.R, &color.G, &color.B) != 3) raise_error("Failed to parse hex code.\n");
+    }
+    if (strlen(hex_code)==8)
+    {
+        if (sscanf(hex_code, "%02hhx%02hhx%02hhx%02hhx", &color.R, &color.G, &color.B, &color.A) != 4) raise_error("Failed to parse hex code.\n");
+    }
 
+
+    return color;
 }
 
 

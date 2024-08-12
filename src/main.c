@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+
+#include <png.h>
 #include <math.h>
 
 #include "utils.h"

@@ -299,6 +299,33 @@ $  ./image-edit -i examples/castle.png --template examples/castle-template.png -
 ![](https://github.com/alperakkin/image-editor/blob/main/examples/template-output.png)
 
 
+### Color Check
+To detect any given color matches in the original image, add the following parameters.
+
+
+```bash
+$   ./image-edit -i examples/image.png --check-color "#FFFFFF" --threshold 0.9
+```
+
+
+#### Input
+![](https://github.com/alperakkin/image-editor/blob/main/examples/signature.png)
+
+
+#### Output
+
+```bash
+$   ./image-edit -i examples/image.png --check-color "#FFFFFF" --threshold 0.9
+[Color: #FFFFFF Fill Ratio: 9.302073 %]
+```
+
+```bash
+$   ./image-edit -i examples/image.png --check-color "#FFFFFF" --threshold 0.05
+[Color: #FFFFFF Fill Ratio: 9.648534 %]
+```
+
+In the example above, it is determined whether a signature is present in the image. Observe how the threshold value affects the reduction of noise in the image.
+
 ## PARAMETERS
 
 -i: Input Image Path
@@ -331,6 +358,7 @@ $  ./image-edit -i examples/castle.png --template examples/castle-template.png -
 --low: Low Key
 --high: High Key
 --template: Match Template
+--color-check: Color Check
 
 
 
