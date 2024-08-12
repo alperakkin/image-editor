@@ -12,6 +12,7 @@ Build the executable by running the Makefile.
 ```bash
 $ make
 ```
+Executable file "image-edit" will be created in bin folder.
 
 ## QUICK START
 
@@ -20,14 +21,14 @@ $ make
 To save the image file with a different name add following parameters
 
 ```bash
-$ ./image-edit -i input.png -o output.png
+$ ./bin/image-edit -i input.png -o output.png
 ```
 
 ### Gray Scale
 To apply gray scale to the desired image file, add following parameters
 
 ```bash
-$ ./image-edit -i input.png -o output.png -g
+$ ./bin/image-edit -i input.png -o output.png -g
 ```
 #### Input
 ![](https://github.com/alperakkin/image-editor/blob/main/examples/castle.png)
@@ -42,7 +43,7 @@ $ ./image-edit -i input.png -o output.png -g
 To apply opacity to the desired image, add following parameters
 
 ```bash
-$ ./image-edit -i examples/castle.png  --opacity 0.3  -o examples/castle-opacity.png
+$ ./bin/image-edit -i examples/castle.png  --opacity 0.3  -o examples/castle-opacity.png
 ```
 #### Input
 ![](https://github.com/alperakkin/image-editor/blob/main/examples/castle.png)
@@ -57,7 +58,7 @@ $ ./image-edit -i examples/castle.png  --opacity 0.3  -o examples/castle-opacity
 To apply contrast to the desired image file, add following parameters
 
 ```bash
-$ ./image-edit -i input.png -o output.png -c 1.2
+$ ./bin/image-edit -i input.png -o output.png -c 1.2
 ```
 #### Input
 ![](https://github.com/alperakkin/image-editor/blob/main/examples/castle.png)
@@ -70,7 +71,7 @@ $ ./image-edit -i input.png -o output.png -c 1.2
 To apply brightness to the desired image file, add following parameters
 
 ```bash
-$ ./image-edit -i input.png -o output.png -b 1.2
+$ ./bin/image-edit -i input.png -o output.png -b 1.2
 ```
 #### Input
 ![](https://github.com/alperakkin/image-editor/blob/main/examples/castle.png)
@@ -85,7 +86,7 @@ To apply Gaussian Blur to the desired image file, add following parameters
 
 
 ```bash
-$ ./image-edit -i examples/castle.png  --gaussian --kernel-size 50 --sigma 1.4  -o examples/castle-gaussian.png
+$ ./bin/image-edit -i examples/castle.png  --gaussian --kernel-size 50 --sigma 1.4  -o examples/castle-gaussian.png
 ```
 
 The --gaussian 50x1.4 parameter applies a Gaussian blur effect, where 50 specifies the size of the Gaussian kernel matrix (e.g., 50x50), and 1.4 indicates the standard deviation (sigma) of the Gaussian distribution.
@@ -103,7 +104,7 @@ To rezise the desired image file, add following parameters
 
 
 ```bash
-$ ./image-edit -i examples/castle.png  -r 128x128  -o examples/castle-resize.png
+$ ./bin/image-edit -i examples/castle.png  -r 128x128  -o examples/castle-resize.png
 ```
 
 
@@ -120,7 +121,7 @@ To obtain the histogram distribution of the color channels of the desired image 
 
 
 ```bash
-$ ./image-edit -i examples/castle.png  --histogram
+$ ./bin/image-edit -i examples/castle.png  --histogram
 ```
 
 
@@ -138,7 +139,7 @@ To apply color filter to the desired image file, add the following parameters.
 
 
 ```bash
-$ ./image-edit -i examples/castle.png  -f --color "#f5da42" --opacity 0.2  -o examples/castle-filter.png
+$ ./bin/image-edit -i examples/castle.png  -f --color "#f5da42" --opacity 0.2  -o examples/castle-filter.png
 ```
 
 This filter applies yellow filter (#f5da42) with 0.2 opacity.
@@ -157,7 +158,7 @@ To add new image to existing image, add the following parameters.
 
 
 ```bash
-$   ./image-edit -i examples/castle.png -l --path examples/sun.png --pos 170x30  --alpha-mask 200 -o examples/castle-layer.png
+$   ./bin/image-edit -i examples/castle.png -l --path examples/sun.png --pos 170x30  --alpha-mask 200 -o examples/castle-layer.png
 ```
 
 This command overlays sun.png onto castle.png at coordinates x:170 and y:30. A higher value of the alpha mask results in a loss of detail in the sun flares, while a lower value creates noise in the image.
@@ -177,7 +178,7 @@ To crop the image from sides, add the following parameters.
 
 
 ```bash
-$ ./image-edit -i examples/castle.png --crop --left 100  --right 10 --top 30 --bottom 20 -o examples/castle-cropped.png
+$ ./bin/image-edit -i examples/castle.png --crop --left 100  --right 10 --top 30 --bottom 20 -o examples/castle-cropped.png
 ```
 
 Side parameters are optional. It is possible to provide just desired sides.
@@ -197,7 +198,7 @@ To rotate the image with given angle in degrees, add the following parameters.
 
 
 ```bash
-$ ./image-edit -i examples/castle.png --rotate 30 -o examples/castle-rotated.png
+$ ./bin/image-edit -i examples/castle.png --rotate 30 -o examples/castle-rotated.png
 ```
 
 
@@ -214,7 +215,7 @@ To invert the colors of the image, add the following parameters.
 
 
 ```bash
-$ ./image-edit -i examples/castle.png --invert -o examples/castle-rotated.png
+$ ./bin/image-edit -i examples/castle.png --invert -o examples/castle-rotated.png
 ```
 
 
@@ -231,7 +232,7 @@ To add borders on the image, add the following parameters.
 
 
 ```bash
-$ ./image-edit -i examples/castle.png --border 5 --color "#f51a00" -o examples/castle-border.png
+$ ./bin/image-edit -i examples/castle.png --border 5 --color "#f51a00" -o examples/castle-border.png
 ```
 
 
@@ -248,7 +249,7 @@ To apply a color mask , add the following parameters.
 
 
 ```bash
-$ ./image-edit -i examples/castle.png  --mask --color "#6a7175"  --threshold 0.65 --mask --color "#255bbb" --threshold 0.35 -o examples/castle-mask.png
+$ ./bin/image-edit -i examples/castle.png  --mask --color "#6a7175"  --threshold 0.65 --mask --color "#255bbb" --threshold 0.35 -o examples/castle-mask.png
 ```
 
 The above command applies two masks to the image. The first mask removes the color #6a7175 from the image with a 65% threshold. The second mask removes the color #255bbb with a 35% threshold.
@@ -267,7 +268,7 @@ To detect the edges in the image , add the following parameters.
 
 
 ```bash
-$  ./image-edit -i examples/castle.png --edge --threshold --low 200 --high 250 -o examples/castle-edge.png
+$  ./bin/image-edit -i examples/castle.png --edge --threshold --low 200 --high 250 -o examples/castle-edge.png
 ```
 
 Fine tune your image with low & high thresholds to get a better result.
@@ -286,7 +287,7 @@ To detect any given template image (part of the original image) matches the orig
 
 
 ```bash
-$  ./image-edit -i examples/castle.png --template examples/castle-template.png --threshold 1
+$  ./bin/image-edit -i examples/castle.png --template examples/castle-template.png --threshold 1
 ```
 
 
@@ -304,7 +305,7 @@ To detect any given color matches in the original image, add the following param
 
 
 ```bash
-$   ./image-edit -i examples/image.png --check-color "#FFFFFF" --threshold 0.9
+$   ./bin/image-edit -i examples/image.png --check-color "#FFFFFF" --threshold 0.9
 ```
 
 
@@ -315,12 +316,12 @@ $   ./image-edit -i examples/image.png --check-color "#FFFFFF" --threshold 0.9
 #### Output
 
 ```bash
-$   ./image-edit -i examples/image.png --check-color "#FFFFFF" --threshold 0.9
+$   ./bin/image-edit -i examples/image.png --check-color "#FFFFFF" --threshold 0.9
 [Color: #FFFFFF Fill Ratio: 9.302073 %]
 ```
 
 ```bash
-$   ./image-edit -i examples/image.png --check-color "#FFFFFF" --threshold 0.05
+$   ./bin/image-edit -i examples/image.png --check-color "#FFFFFF" --threshold 0.05
 [Color: #FFFFFF Fill Ratio: 9.648534 %]
 ```
 
@@ -367,7 +368,7 @@ In the example above, it is determined whether a signature is present in the ima
 Multiple arguments can be assigned to the input image as shown below
 
 ```bash
-$ ./image-edit -i examples/castle.png  -r 128x128 --gaussian --kernel-size 50 --sigma 1.4 -o examples/castle-multiple.png
+$ ./bin/image-edit -i examples/castle.png  -r 128x128 --gaussian --kernel-size 50 --sigma 1.4 -o examples/castle-multiple.png
 ```
 
 

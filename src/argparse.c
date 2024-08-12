@@ -1,6 +1,5 @@
-#define DEFAULT_VALUE "found";
-int ARGC;
-char** ARGV;
+#include "argparse.h"
+
 void help() {
 
     printf("----------------- Help -------------------\n\n");
@@ -90,6 +89,7 @@ void parse_args(int argc, char *argv[])
 
 
     char* input_path = find_argument("-i", true);
+
     if (input_path) image = read_png_file(input_path);
 
     if (find_argument("-g", false)) grayscale(image);
@@ -242,12 +242,7 @@ void parse_args(int argc, char *argv[])
 
 
     OUTPUT_PATH = find_argument("-o", false);
+    if (!output.name) output = image;
     if (OUTPUT_PATH) write_png_file(OUTPUT_PATH, output);
-
-
-
-
-
-
 
 }

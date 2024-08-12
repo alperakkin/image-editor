@@ -1,13 +1,4 @@
-
-#include <float.h>
-#include <stdlib.h>
-#include "helpers.h"
-
-
-const char* INPUT_PATH;
-const char* OUTPUT_PATH;
-
-
+#include "editor.h"
 
 
 Image grayscale(Image image)
@@ -449,10 +440,9 @@ Image invert(Image image)
     return image;
 }
 
+
 Image add_border(Image image, char* color, int size)
 {
-
-
 
     Color color_rgb = hex_to_rgb(color);
 

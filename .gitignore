@@ -4,3 +4,6 @@ image-edit
 .DS_Store
 examples/.DS_Store
 !examples/*.png
+
+bin/*
+build/*

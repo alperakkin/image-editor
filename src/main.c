@@ -1,14 +1,5 @@
-#include <stdlib.h>
 #include <stdio.h>
-#include <stdbool.h>
-#include <string.h>
 
-#include <png.h>
-#include <math.h>
-
-#include "utils.h"
-#include "image.h"
-#include "editor.h"
 #include "argparse.h"
 
 

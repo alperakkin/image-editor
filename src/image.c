@@ -1,4 +1,4 @@
-
+#include "image.h"
 
 Image read_png_file(const char *FILENAME) {
   FILE *fp = fopen(FILENAME, "rb");
@@ -21,6 +21,7 @@ Image read_png_file(const char *FILENAME) {
   image.height     = png_get_image_height(png, info);
   image.color_type = png_get_color_type(png, info);
   image.bit_depth  = png_get_bit_depth(png, info);
+  image.name = FILENAME;
 
 
   if(image.bit_depth == 16)
@@ -63,7 +64,7 @@ Image read_png_file(const char *FILENAME) {
 }
 
 
-Image alloc_image(image_width, image_height){
+Image alloc_image(int image_width, int image_height){
   Image image;
   image.width = image_width;
   image.height = image_height;
@@ -139,3 +140,28 @@ void write_png_file(const char *FILENAME, Image image)
   png_destroy_write_struct(&png, &info);
 }
 
+Color hex_to_rgb(char* hex_code)
+{
+    Color color = {
+        .R=0,
+        .G=0,
+        .B=0,
+        .A=0
+    };
+
+    if (hex_code == NULL || strlen(hex_code) < 7) raise_error("Invalid hex code.");
+
+    if (hex_code[0] == '#') hex_code++;
+
+    if (strlen(hex_code)==6)
+    {
+        if (sscanf(hex_code, "%02hhx%02hhx%02hhx", &color.R, &color.G, &color.B) != 3) raise_error("Failed to parse hex code.\n");
+    }
+    if (strlen(hex_code)==8)
+    {
+        if (sscanf(hex_code, "%02hhx%02hhx%02hhx%02hhx", &color.R, &color.G, &color.B, &color.A) != 4) raise_error("Failed to parse hex code.\n");
+    }
+
+
+    return color;
+}
