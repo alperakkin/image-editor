@@ -120,3 +120,20 @@ void hex_to_rgb(char* hex_code, int* r, int* g, int* b)
     if (sscanf(hex_code, "%02x%02x%02x", r, g, b) != 3) raise_error("Failed to parse hex code.\n");
 
 }
+
+
+
+int** alloc_matrix(int width, int height)
+{
+    int** rows = malloc(height * sizeof(int*));
+    for (int i = 0; i < height; i++)
+    {
+        rows[i] = malloc(width * sizeof(int));
+
+        for(int j = 0; j < width; j++)
+        {
+            rows[i][j] = 0;
+        }
+    }
+    return rows;
+}

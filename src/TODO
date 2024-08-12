@@ -14,5 +14,6 @@
 [x] Add Border
 [x] Mask Color
 [x] Edge Detection
-[ ] Template Matching
+[x] Template Matching
+[ ] Color Check
 

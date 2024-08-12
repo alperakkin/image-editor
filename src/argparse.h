@@ -40,6 +40,7 @@ void help() {
     printf("--low: Low Value\n");
     printf("--high: Hight Value\n");
     printf("--edge: Edge Detection\n");
+    printf("--template: Match Template\n");
     printf("\n");
     printf("-------------------------------------------\n\n");
 
@@ -222,8 +223,19 @@ void parse_args(int argc, char *argv[])
         output = edge(image, high, low);
     }
 
-    OUTPUT_PATH = find_argument("-o", true);
-    write_png_file(OUTPUT_PATH, output);
+    char* template = find_argument("--template", false);
+    if (template)
+    {
+        Image template_img = read_png_file(template);
+        float threshold = (float) atof(find_argument("--threshold", true));
+
+        match_template(image, template_img, threshold);
+
+
+    }
+
+    OUTPUT_PATH = find_argument("-o", false);
+    if (OUTPUT_PATH) write_png_file(OUTPUT_PATH, output);
 
 
 

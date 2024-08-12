@@ -1,12 +1,7 @@
 
 #include <float.h>
 #include <stdlib.h>
-#include "utils.h"
 #include "helpers.h"
-
-
-
-
 
 
 const char* INPUT_PATH;
@@ -529,347 +524,6 @@ Image mask(Image image, char* color, float threshold)
 }
 
 
-int** alloc_matrix(int width, int height)
-{
-    int** rows = malloc(height * sizeof(int*));
-    for (int i = 0; i < height; i++)
-    {
-        rows[i] = malloc(width * sizeof(int));
-
-        for(int j = 0; j < width; j++)
-        {
-            rows[i][j] = 0;
-        }
-    }
-    return rows;
-}
-
-
-int** sobel_filter(Image image, char direction)
-{
-
-    int sobel_matrix[3][3];
-
-    if (direction == 'x') {
-        int sobel_x[3][3] = {
-            {-1, 0, 1},
-            {-2, 0, 2},
-            {-1, 0, 1}
-        };
-        memcpy(sobel_matrix, sobel_x, 9 * sizeof(int));
-    } else if (direction == 'y') {
-        int sobel_y[3][3] = {
-            {-1, -2, -1},
-            {0, 0, 0},
-            {1, 2, 1}
-        };
-        memcpy(sobel_matrix, sobel_y, 9 * sizeof(int));
-    }
-
-
-
-
-
-   int** sobel_filter_matrix = alloc_matrix(image.width, image.height);
-
-    for (int y=0; y < image.height; y++)
-    {
-
-        int* sobel_row = sobel_filter_matrix[y];
-
-
-        for (int x=0; x < image.width; x++)
-        {
-
-            sobel_filter_matrix[y][x] = 0;
-
-            for(int sy = -1; sy <= 1; sy++)
-            {
-                for(int sx = -1; sx <= 1; sx++)
-                {
-                    int posy = sy + y;
-                    int posx = sx + x;
-                    if (posy < 0 || posy >= image.height || posx < 0 || posx >= image.width) continue;
-                    png_bytep row = image.pixels[posy];
-                    png_bytep px = &(row[posx * 4]);
-
-                    sobel_filter_matrix[y][x] = sobel_filter_matrix[y][x] +(px[0] * sobel_matrix[sy+1][sx+1]);
-
-                }
-
-            }
-
-
-
-
-        }
-
-    }
-
-
-
-
-
-    return sobel_filter_matrix;
-}
-
-int** gradient_direction(int** sobel_x, int** sobel_y, int width, int height)
-{
-    int** gradient_matrix = alloc_matrix(width, height);
-
-    for (int y=0; y < height; y++)
-    {
-
-        for (int x=0; x < width; x++)
-        {
-            gradient_matrix[y][x] = atan2(sobel_y[y][x], sobel_x[y][x]);
-        }
-
-    }
-
-    return gradient_matrix;
-}
-
-
-int** gradient_magnitude(int** sobel_x, int** sobel_y, int width, int height)
-{
-    int** gradient_matrix = alloc_matrix(width, height);
-
-    for (int y=0; y < height; y++)
-    {
-
-        for (int x=0; x < width; x++)
-        {
-
-            double sq = (sobel_x[y][x] * sobel_x[y][x]) + (sobel_y[y][x] * sobel_y[y][x]);
-            gradient_matrix[y][x] = sqrt(sq);
-
-        }
-
-    }
-    return gradient_matrix;
-}
-
-int** non_maximum_suppression(int** gradient_mag, int** gradient_dir, int width, int height)
-{
-    int** suppr_matrix = alloc_matrix(width, height);
-    for (int y=0; y < height; y++)
-    {
-
-        for (int x=0; x < width; x++)
-        {
-
-
-            double angle = gradient_dir[y][x];
-
-            if (angle > M_PI) angle -= M_PI;
-            if (angle >=0 && angle < M_PI/8) angle = 0;
-            if (angle >=M_PI/8 && angle < M_PI/4) angle = (int) M_PI/4;
-            if (angle >=M_PI/4 && angle < M_PI/2) angle = (int) M_PI/2;
-            if (angle >=M_PI/2 && angle < 3 * M_PI / 4) angle = (int) 3 * M_PI /4;
-            if (angle >=3 * M_PI / 4 && angle < M_PI) angle = (int) M_PI;
-
-            if (angle == 0 || angle == M_PI)
-            {
-
-                int left = 0;
-                int right = 0;
-                if (x-1 >= 0)
-                {
-                    left = gradient_mag[y][x-1];
-                }
-                if (x+1 < width)
-                {
-                    right = gradient_mag[y][x+1];
-                }
-
-                if (gradient_mag[y][x] > left && gradient_mag[y][x] > right)
-                {
-                    suppr_matrix[y][x]= gradient_mag[y][x];
-
-                }
-                else
-                {
-                    suppr_matrix[y][x] = 0;
-
-                }
-            }
-
-            if (angle == (int) M_PI/4)
-            {
-                int bottom_left = 0;
-                int top_right = 0;
-                if (y-1 >= 0 && x-1 >= 0)
-                {
-
-                    bottom_left = gradient_mag[y-1][x-1];
-
-                }
-                if (y+1 < height && x+1 < width)
-                {
-                    top_right = gradient_mag[y+1][x+1];
-
-                }
-
-                if (gradient_mag[y][x] > bottom_left && gradient_mag[y][x] > top_right)
-                {
-                    suppr_matrix[y][x] = gradient_mag[y][x];
-
-                }
-                else
-                {
-                    suppr_matrix[y][x] = 0;
-
-                }
-            }
-
-            if (angle == (int) 3* M_PI/4)
-            {
-                int bottom_right = 0;
-                int top_left = 0;
-                if (y-1 >= 0 && x+1 < width)
-                {
-                    bottom_right = gradient_mag[y-1][x+1];
-                }
-                if (y+1 < height && x-1 >= 0)
-                {
-                    top_left = gradient_mag[y+1][x-1];
-                }
-
-                if (gradient_mag[y][x] > bottom_right && gradient_mag[y][x] > top_left)
-                {
-                    suppr_matrix[y][x] = gradient_mag[y][x];
-
-                }
-                else
-                {
-                    suppr_matrix[y][x] = 0;
-                }
-
-            }
-
-            if (angle == (int) M_PI/2)
-            {
-                int top = 0;
-                int bottom = 0;
-                if (y-1 >= 0)
-                {
-
-                    bottom = gradient_mag[y-1][x];
-                }
-                if (y+1 < height)
-                {
-
-                    top = gradient_mag[y+1][x];
-                }
-
-                if (gradient_mag[y][x] > bottom && gradient_mag[y][x]> top)
-                {
-                    suppr_matrix[y][x] = gradient_mag[y][x];
-
-                }
-                else
-                {
-                    suppr_matrix[y][x] = 0;
-
-                }
-
-            }
-
-
-        }
-
-    }
-
-    return suppr_matrix;
-
-}
-
-Image double_threshold(Image image, int** supp_matrix, int high, int low)
-{
-    for (int y=0; y < image.height; y++)
-    {
-
-        png_bytep row = image.pixels[y];
-
-        for (int x=0; x < image.width; x++)
-        {
-            png_bytep px = &(row[x * 4]);
-
-
-            if (supp_matrix[y][x] >= high)
-            {
-                px[0] = 255;
-                px[1] = 255;
-                px[2] = 255;
-                px[3]=255;
-            }
-            if (supp_matrix[y][x] >= low && px[0] < high)
-            {
-                px[0] = 128,
-                px[1] = 128,
-                px[2] = 128,
-                px[3]=255;
-            };
-            if (supp_matrix[y][x] < low)
-             {
-                px[0] = 0;
-                px[1] = 0;
-                px[2] = 0;
-                px[3]=255;
-            }
-
-        }
-    }
-
-    return image;
-}
-
-Image edge_tracking(Image image)
-{
-    for (int y=0; y < image.height; y++)
-    {
-
-        png_bytep row = image.pixels[y];
-
-        for (int x=0; x < image.width; x++)
-        {
-            png_bytep px = &(row[x * 4]);
-
-            if (px[0] == 128)
-            {
-
-
-                for(int sy = -1; sy != 1; sy++)
-                {
-                    for(int sx = -1; sx != 1; sx++)
-                    {
-                        int posy = sy + y;
-                        int posx = sx + x;
-                        if (posy < 0 || posy > image.height || posx < 0 || posx > image.width) continue;
-                        png_bytep e_row = image.pixels[posy];
-                        png_bytep e_px = &(e_row[posx * 4]);
-
-                        if(e_px[0] ==255)
-                        {
-                            px[0] = 255;
-                            px[1] = 255;
-                            px[2] = 255;
-                        }
-
-
-                    }
-
-                }
-            }
-        }
-
-    }
-
-    return image;
-}
-
-
 Image edge(Image image, int high_threshold, int low_threshold)
 {
     int KERNEL_SIZE = 5;
@@ -885,4 +539,61 @@ Image edge(Image image, int high_threshold, int low_threshold)
     Image result = edge_tracking(dbl_thresh);
 
     return result;
+}
+
+void match_template(Image image, Image template, float threshold)
+{
+
+  int total_match = 0;
+
+  for (int y=0; y<(image.height - template.height); y++)
+  {
+
+    for (int x=0; x<(image.width - template.width); x++)
+    {
+
+        for(int ty=0; ty<template.height; ty++)
+        {
+            png_bytep row = image.pixels[ty+y];
+            png_bytep tmp_row = template.pixels[ty];
+            for(int tx=0; tx<template.width; tx++)
+            {
+                png_bytep px = &(row[(tx+x) * 4]);
+                png_bytep tmp_px = &(tmp_row[tx * 4]);
+
+
+
+                if (
+                    (px[0] >= (int) tmp_px[0]*threshold && px[0] <= tmp_px[0])  &&
+                    (px[1] >= (int) tmp_px[1]*threshold && px[1] <= tmp_px[1])  &&
+                    (px[2] >= (int) tmp_px[2]*threshold && px[2] <= tmp_px[2])  &&
+                    (px[3] >= (int) tmp_px[3]*threshold && px[3] <= tmp_px[3])
+                    ) {
+
+                        total_match++;
+
+
+                        if (total_match == (template.width*template.height))
+                        {
+                            printf("Found: [Top Left: (%d, %d) - Bottom Right: (%d, %d)]\n", x, y, x + template.width, y+template.height);
+                            exit(0);
+                        }
+
+                    }
+                else{
+                    total_match = 0;
+                }
+
+
+
+            }
+
+            if (total_match == 0) continue;
+
+        }
+
+    }
+
+  }
+
 }

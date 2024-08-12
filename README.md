@@ -280,6 +280,25 @@ Fine tune your image with low & high thresholds to get a better result.
 
 ![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-mask.png)
 
+
+### Template Matching
+To detect any given template image (part of the original image) matches the original image, add the following parameters.
+
+
+```bash
+$  ./image-edit -i examples/castle.png --template examples/castle-template.png --threshold 1
+```
+
+
+#### Inputs
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle.png)
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-template.png)
+
+#### Output
+
+![](https://github.com/alperakkin/image-editor/blob/main/examples/template-output.png)
+
+
 ## PARAMETERS
 
 -i: Input Image Path
@@ -311,6 +330,7 @@ Fine tune your image with low & high thresholds to get a better result.
 --edge: Edge Detection
 --low: Low Key
 --high: High Key
+--template: Match Template
 
 
 

@@ -4,6 +4,7 @@
 #include <string.h>
 #include <math.h>
 
+#include "utils.h"
 #include "image.h"
 #include "editor.h"
 #include "argparse.h"

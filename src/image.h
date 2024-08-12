@@ -14,7 +14,7 @@ typedef struct {
 
 Image read_png_file(const char *FILENAME) {
   FILE *fp = fopen(FILENAME, "rb");
-
+  if (!fp) raise_error("Given path is not valid!");
   Image image;
 
   png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
@@ -34,8 +34,6 @@ Image read_png_file(const char *FILENAME) {
   image.color_type = png_get_color_type(png, info);
   image.bit_depth  = png_get_bit_depth(png, info);
 
-  // Read any color_type into 8bit depth, RGBA format.
-  // See http://www.libpng.org/pub/png/libpng-manual.txt
 
   if(image.bit_depth == 16)
     png_set_strip_16(png);
@@ -43,14 +41,14 @@ Image read_png_file(const char *FILENAME) {
   if(image.color_type == PNG_COLOR_TYPE_PALETTE)
     png_set_palette_to_rgb(png);
 
-  // PNG_COLOR_TYPE_GRAY_ALPHA is always 8 or 16bit depth.
   if(image.color_type == PNG_COLOR_TYPE_GRAY && image.bit_depth < 8)
     png_set_expand_gray_1_2_4_to_8(png);
 
   if(png_get_valid(png, info, PNG_INFO_tRNS))
     png_set_tRNS_to_alpha(png);
 
-  // These color_type don't have an alpha channel then fill it with 0xff.
+
+
   if(image.color_type == PNG_COLOR_TYPE_RGB ||
      image.color_type == PNG_COLOR_TYPE_GRAY ||
      image.color_type == PNG_COLOR_TYPE_PALETTE)
