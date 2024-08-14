@@ -1,6 +1,5 @@
 #include "editor.h"
 
-
 Image grayscale(Image image)
 {
     for (int y = 0; y < image.height; y++)
@@ -23,7 +22,7 @@ Image grayscale(Image image)
 
 Image  contrast(Image image, float f)
 {
-    Intensity statistics = intensity(image);
+    Statistics statistics = intensity(image);
 
     for(int y = 0; y < image.height; y++)
     {
@@ -32,31 +31,20 @@ Image  contrast(Image image, float f)
         {
             png_bytep px = &(row[x * 4]);
 
-            int avg = (int)(px[0] + px[1] + px[2]) / 3;
 
-            int contrast_applied =  255  *
-                ((float)(avg - statistics.min) /
-                (float)(statistics.max - statistics.min));
+            int red = ((int) (statistics.avg_red + (int) ((px[0] - statistics.avg_red) * f)));
+            int green = ((int) (statistics.avg_green + (int) ((px[1] - statistics.avg_green) * f)));
+            int blue = ((int) (statistics.avg_blue + (int) ((px[2] - statistics.avg_blue) * f)));
 
-            float ratio = f * ((float) contrast_applied / (float) avg);
-
-            int red = (int) px[0] * ratio;
-            int green = (int) px[1] * ratio;
-            int blue = (int) px[2] * ratio;
-
-
-
-            if (red > 255) red = 255;
-            if (red < 0) red = 0;
-            if (green > 255) green = 255;
-            if (green < 0) green = 0;
-            if (blue > 255) blue = 255;
-            if (blue < 0) blue = 0;
-
+            red = (int) max(0,  min(255, red));
+            green = (int) max(0, min(255, green));
+            blue = (int) max(0,  min(255, blue));
 
             px[0] = red;
             px[1] = green;
             px[2] = blue;
+
+
 
 
         }

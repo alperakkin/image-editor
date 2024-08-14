@@ -1,9 +1,15 @@
 #include "helpers.h"
 
 
-Intensity intensity(Image image)
+Statistics intensity(Image image)
 {
-    Intensity intensity_data = {255, 0};
+    Statistics intensity_data = {255, 0, 0};
+    int total = 0;
+    int total_red = 0;
+    int total_green = 0;
+    int total_blue = 0;
+    int total_px = image.width * image.height;
+
     for(int y = 0; y < image.height; y++)
     {
         png_bytep row = image.pixels[y];
@@ -11,11 +17,19 @@ Intensity intensity(Image image)
         {
             png_bytep px = &(row[x * 4]);
             int avg = (int)(px[0] + px[1] + px[2]) / 3;
+            total += avg;
+            total_red += px[0];
+            total_green += px[1];
+            total_blue += px[2];
 
             if (avg<= intensity_data.min) intensity_data.min = avg;
             if (avg>= intensity_data.max) intensity_data.max = avg;
-
         }
+
+        intensity_data.avg = (int) total / total_px;
+        intensity_data.avg_red = (int) total_red / total_px;
+        intensity_data.avg_green = (int) total_green / total_px;
+        intensity_data.avg_blue = (int) total_blue / total_px;
 
      }
     return intensity_data;

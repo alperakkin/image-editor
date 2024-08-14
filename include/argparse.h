@@ -7,8 +7,8 @@
 int ARGC;
 char** ARGV;
 
-const char* INPUT_PATH;
-const char* OUTPUT_PATH;
+char* INPUT_PATH;
+char* OUTPUT_PATH;
 
 void help();
 char* find_argument(char* arg, bool raise);

@@ -5,9 +5,14 @@
 typedef struct {
     int min;
     int max;
-} Intensity;
+    int avg;
+    int avg_red;
+    int avg_green;
+    int avg_blue;
 
-Intensity intensity(Image image);
+} Statistics;
+
+Statistics intensity(Image image);
 
 double** kernel_filter(int kernel_size, float sigma);
 

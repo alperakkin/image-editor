@@ -4,6 +4,8 @@
 
 #include "helpers.h"
 
+#define min(a, b) ((a) < (b) ? (a) : (b))
+#define max(a, b) ((a) > (b) ? (a) : (b))
 
 Image grayscale(Image image);
 Image  contrast(Image image, float f);

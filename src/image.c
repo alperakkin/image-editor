@@ -1,6 +1,6 @@
 #include "image.h"
 
-Image read_png_file(const char *FILENAME) {
+Image read_png_file(char *FILENAME) {
   FILE *fp = fopen(FILENAME, "rb");
   if (!fp) raise_error("Given path is not valid!");
   Image image;
@@ -95,7 +95,7 @@ void free_image(Image image)
 
 }
 
-void write_png_file(const char *FILENAME, Image image)
+void write_png_file(char *FILENAME, Image image)
 {
   int y;
 

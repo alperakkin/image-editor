@@ -29,8 +29,8 @@ typedef struct {
     int min;
 } ColorMode;
 
-Image read_png_file(const char *FILENAME);
-void write_png_file(const char *FILENAME, Image image);
+Image read_png_file(char *FILENAME);
+void write_png_file(char *FILENAME, Image image);
 
 
 Image alloc_image(int image_width, int image_height);
