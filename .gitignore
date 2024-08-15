@@ -1,5 +1,10 @@
 image-edit
+
 *.png
+*.o
+*.so
+*.dylib
+*. dll
 
 .DS_Store
 examples/.DS_Store
@@ -7,3 +12,4 @@ examples/.DS_Store
 
 bin/*
 build/*
+__pycache__

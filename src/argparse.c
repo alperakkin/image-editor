@@ -90,7 +90,7 @@ void parse_args(int argc, char *argv[])
 
     char* input_path = find_argument("-i", true);
 
-    if (input_path) image = read_png_file(input_path);
+    if (input_path) image = open_image(input_path);
 
     if (find_argument("-g", false)) grayscale(image);
 
@@ -156,7 +156,7 @@ void parse_args(int argc, char *argv[])
         int x = (int) atof(size[0]);
         int y = (int) atof(size[1]);
 
-        Image patch = read_png_file(path);
+        Image patch = open_image(path);
 
         output = add_layer(image, patch, x, y, alpha);
 
@@ -226,7 +226,7 @@ void parse_args(int argc, char *argv[])
     char* template = find_argument("--template", false);
     if (template)
     {
-        Image template_img = read_png_file(template);
+        Image template_img = open_image(template);
         float threshold = (float) atof(find_argument("--threshold", true));
 
         match_template(image, template_img, threshold);
@@ -243,6 +243,6 @@ void parse_args(int argc, char *argv[])
 
     OUTPUT_PATH = find_argument("-o", false);
     if (!output.name) output = image;
-    if (OUTPUT_PATH) write_png_file(OUTPUT_PATH, output);
+    if (OUTPUT_PATH) save_image(OUTPUT_PATH, output);
 
 }

@@ -1,7 +1,14 @@
 #include "image.h"
 
-Image read_png_file(char *FILENAME) {
+
+Image open_image(char* FILENAME) {
+  if (FILENAME == NULL) {
+        fprintf(stderr, "Error: NULL pointer passed to print_file_content.\n");
+        exit(1);
+    }
+
   FILE *fp = fopen(FILENAME, "rb");
+
   if (!fp) raise_error("Given path is not valid!");
   Image image;
 
@@ -95,7 +102,7 @@ void free_image(Image image)
 
 }
 
-void write_png_file(char *FILENAME, Image image)
+void save_image(char *FILENAME, Image image)
 {
   int y;
 
