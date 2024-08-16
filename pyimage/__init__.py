@@ -13,30 +13,30 @@ class Editor:
         byte_path = filename.encode('utf-8')
         return img.open_image(ctypes.c_char_p(byte_path))
 
-    def save_image(self, path, imageect):
+    def save_image(self, path, image):
         path = ctypes.c_char_p(path.encode("utf-8"))
-        img.save_image(path, imageect)
+        img.save_image(path, image)
 
-    def gray_scale(self, imageect):
-        return img.grayscale(imageect)
+    def gray_scale(self, image):
+        return img.grayscale(image)
 
-    def contrast(self, imageect, factor):
+    def contrast(self, image, factor):
         factor = ctypes.c_float(factor)
-        return img.contrast(imageect, factor)
+        return img.contrast(image, factor)
 
-    def brightness(self, imageect, ratio):
+    def brightness(self, image, ratio):
         ratio = ctypes.c_float(ratio)
-        return img.brightness(imageect, ratio)
+        return img.brightness(image, ratio)
 
-    def gaussian(self, imageect, kernel_size, sigma):
+    def gaussian(self, image, kernel_size, sigma):
         kernel_size = ctypes.c_int(kernel_size)
         sigma = ctypes.c_float(sigma)
-        return img.gaussian(imageect, kernel_size, sigma)
+        return img.gaussian(image, kernel_size, sigma)
 
-    def resize(self, imageect, width, height):
+    def resize(self, image, width, height):
         width = ctypes.c_int(width)
         height = ctypes.c_int(height)
-        return img.resize(imageect, width, height)
+        return img.resize(image, width, height)
 
     def histogram(self, image):
         img.histogram(image)
