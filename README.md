@@ -1,8 +1,7 @@
 # image-editor
 
 ## DEFINITION
-Simple image editor written in C.
-Editor supports only png files.
+A lightweight image editor written in C, designed to be integrated into Python packages.
 
 
 ## BUILD
