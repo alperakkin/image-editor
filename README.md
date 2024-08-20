@@ -308,7 +308,11 @@ $  ./bin/image-edit -i examples/castle.png --template examples/castle-template.p
 
 #### Output
 
-![](https://github.com/alperakkin/image-editor/blob/main/examples/template-output.png)
+```bash
+$  ./bin/image-edit -i examples/castle.png --template examples/castle-template.png --threshold 1
+Found: [Top Left: (100, 100) - Bottom Right: (156, 156)]  
+
+```
 
 
 ### Color Check
@@ -355,42 +359,40 @@ $   ./bin/image-edit -i examples/castle.png --vignette 1.1 -o examples/castle-vi
 ![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-vignette.png)
 
 
-In the example above, it is determined whether a signature is present in the image. Observe how the threshold value affects the reduction of noise in the image.
-
 ## PARAMETERS
 
--i: Input Image Path
--o: Output Image Path
--g: Gray Scale
--c: Contrast
--b: Brightness
---gaussian: Gaussian Blur
--r: Resize
---histogram: Histogram
--f: Color Filter
---color: Color Hex Value
---opacity: Opacity
---kernel-size: Kernel Size
---sigma: Sigma Value
--l: Add Image Layer
---path: Layer Path
---pos: Locate Image
---crop: Crop Image
---left: Left Side in Pixels
---right: Right Side in Pixels
---top: Top Side in Pixels
---bottom: Bottom Side in Pixels
---rotate: Rotate Image to given angle
---invert: Invert Colors
---border: Add Border
---mask: Add Mask
---threshold: Threshold
---edge: Edge Detection
---low: Low Key
---high: High Key
---template: Match Template
---color-check: Color Check
---vignette: Apply Vignette
+-i: Input Image Path  
+-o: Output Image Path  
+-g: Gray Scale  
+-c: Contrast  
+-b: Brightness  
+--gaussian: Gaussian Blur  
+-r: Resize  
+--histogram: Histogram  
+-f: Color Filter  
+--color: Color Hex Value  
+--opacity: Opacity  
+--kernel-size: Kernel Size  
+--sigma: Sigma Value  
+-l: Add Image Layer  
+--path: Layer Path  
+--pos: Locate Image  
+--crop: Crop Image  
+--left: Left Side in Pixels  
+--right: Right Side in Pixels  
+--top: Top Side in Pixels  
+--bottom: Bottom Side in Pixels  
+--rotate: Rotate Image to given angle  
+--invert: Invert Colors  
+--border: Add Border  
+--mask: Add Mask  
+--threshold: Threshold  
+--edge: Edge Detection  
+--low: Low Key  
+--high: High Key  
+--template: Match Template  
+--color-check: Color Check  
+--vignette: Apply Vignette  
 
 
 
