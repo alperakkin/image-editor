@@ -25,6 +25,30 @@ After build completes, you can use pyimage folder as python package.
 
 Note: This package can only be used for Unix based systems. (Linux, Darwin etc.)
 
+
+### Python Usage
+
+```python
+from pyimage import Editor
+
+editor = Editor()
+file_path = "examples/castle.png"
+
+img = editor.open_image(file_path)
+img = editor.gray_scale(img)
+img = editor.gaussian(img, 5, 1.2)
+
+editor.save_image("examples/castle-python.png", img)
+
+```
+
+#### Input
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle.png)
+
+#### Output
+
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-python.png)
+
 ## QUICK START
 
 ### Save As
@@ -414,26 +438,4 @@ $ ./bin/image-edit -i examples/castle.png  -r 128x128 --gaussian --kernel-size 5
 
 
 
-### Python Usage
-
-```python
-from pyimage import Editor
-
-editor = Editor()
-file_path = "examples/castle.png"
-
-img = editor.open_image(file_path)
-img = editor.gray_scale(img)
-img = editor.gaussian(img, 5, 1.2)
-
-editor.save_image("examples/castle-python.png", img)
-
-```
-
-#### Input
-![](https://github.com/alperakkin/image-editor/blob/main/examples/castle.png)
-
-#### Output
-
-![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-python.png)
 
