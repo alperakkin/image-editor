@@ -327,6 +327,25 @@ $   ./bin/image-edit -i examples/image.png --check-color "#FFFFFF" --threshold 0
 
 In the example above, it is determined whether a signature is present in the image. Observe how the threshold value affects the reduction of noise in the image.
 
+### Vignette
+To apply vignette to the image, add the following parameters.
+
+
+```bash
+$   ./bin/image-edit -i examples/castle.png --vignette 1.1 -o examples/castle-vignette.png
+```
+
+
+#### Input
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle.png)
+
+
+#### Output
+![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-vignette.png)
+
+
+In the example above, it is determined whether a signature is present in the image. Observe how the threshold value affects the reduction of noise in the image.
+
 ## PARAMETERS
 
 -i: Input Image Path
@@ -360,6 +379,7 @@ In the example above, it is determined whether a signature is present in the ima
 --high: High Key
 --template: Match Template
 --color-check: Color Check
+--vignette: Apply Vignette
 
 
 

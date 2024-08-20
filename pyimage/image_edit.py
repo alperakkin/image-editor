@@ -86,3 +86,6 @@ img_lib.match_template.restype = None
 
 img_lib.check_color.argtypes = [Image, ctypes.c_char_p, ctypes.c_float]
 img_lib.check_color.restype = None
+
+img_lib.vignette.argtypes = [Image, ctypes.c_float]
+img_lib.vignette.restype = Image

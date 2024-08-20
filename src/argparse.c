@@ -40,6 +40,7 @@ void help() {
     printf("--high: Hight Value\n");
     printf("--edge: Edge Detection\n");
     printf("--template: Match Template\n");
+    printf("--vignette: Apply Vignette\n");
     printf("\n");
     printf("-------------------------------------------\n\n");
 
@@ -238,6 +239,12 @@ void parse_args(int argc, char *argv[])
     {
         float threshold = (float) atof(find_argument("--threshold", true));
         check_color(image, color_val, threshold);
+    }
+    char *ratio_text = find_argument("--vignette", false);
+    if (ratio_text)
+    {
+        float ratio = (float) atof(ratio_text);
+        vignette(image, ratio);
     }
 
 

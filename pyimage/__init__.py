@@ -54,7 +54,7 @@ class Editor:
         pos_x = ctypes.c_int(pos_x)
         pos_y = ctypes.c_int(pos_y)
         alpha = ctypes.c_int(alpha)
-        return img.add_layer(alpha, patch, pos_x, pos_y, alpha)
+        return img.add_layer(image, alpha, patch, pos_x, pos_y, alpha)
 
     def crop(self, image, left, right, top, bottom):
         left = ctypes.c_int(left)
@@ -93,3 +93,7 @@ class Editor:
         color = ctypes.c_char_p(color.encode("utf-8"))
         threshold = ctypes.c_float(threshold)
         img.check_color(image, color, threshold)
+
+    def vignette(self, image, factor):
+        factor = ctypes.c_float(factor)
+        img.vignette(image, factor)

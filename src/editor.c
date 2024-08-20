@@ -602,3 +602,40 @@ void check_color(Image image, char *color, float threshold)
 
     printf("[Color: %s Fill Ratio: %f %%]\n", color, ratio*10);
 }
+
+Image vignette(Image image, float ratio)
+{
+    int center_x = (int) image.width / 2;
+    int center_y = (int) image.height / 2;
+
+    double r_max = sqrt(
+        ((image.width -1 - center_x) * (image.width -1 - center_x)) +
+        ((image.height -1 - center_y) * (image.height -1 - center_y))
+    ) * ratio;
+
+    for (int y=0; y<image.height; y++)
+    {
+        png_bytep row = image.pixels[y];
+
+        for (int x=0; x<image.width; x++)
+        {
+            png_bytep px = &(row[x * 4]);
+
+            double distance =  sqrt(
+                ((x-center_x)*(x-center_x)) + ((y-center_y)*(y-center_y))
+            );
+
+            double vignette_factor = 1 - ((distance / r_max) * (distance / r_max));
+
+            px[0] = (int) px[0] * vignette_factor;
+            px[1] = (int) px[1] * vignette_factor;
+            px[2] = (int) px[2] * vignette_factor;
+
+            if (px[0] > 255) px[0] = 255;
+            if (px[1] > 255) px[1] = 255;
+            if (px[2] > 255) px[2] = 255;
+        }
+
+    }
+    return image;
+}
