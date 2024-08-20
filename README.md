@@ -1,8 +1,7 @@
 # image-editor
 
 ## DEFINITION
-Simple image editor written in C.
-Editor supports only png files.
+A lightweight image editor written in C, designed to be integrated into Python packages.
 
 
 ## BUILD
@@ -13,6 +12,18 @@ Build the executable by running the Makefile.
 $ make
 ```
 Executable file "image-edit" will be created in bin folder.
+
+### AS PYTHON PACKAGE
+
+To build python package from image editor .c files run following script
+
+```bash
+$ make shared
+```
+
+After build completes, you can use pyimage folder as python package.
+
+Note: This package can only be used for Unix based systems. (Linux, Darwin etc.)
 
 ## QUICK START
 
@@ -400,17 +411,6 @@ $ ./bin/image-edit -i examples/castle.png  -r 128x128 --gaussian --kernel-size 5
 ![](https://github.com/alperakkin/image-editor/blob/main/examples/castle-multiple.png)
 
 
-## BUILD PYTHON PACKAGE
-
-To create python package from image editor .c files run following script
-
-```bash
-$ make shared
-```
-
-After build completes, you can use pyimage folder as python package.
-
-Note: This package can only be used for Unix based systems. (Linux, Darwin etc.)
 
 ### Python Usage
 
