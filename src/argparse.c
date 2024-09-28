@@ -1,6 +1,7 @@
 #include "argparse.h"
 
-void help() {
+void help()
+{
 
     printf("----------------- Help -------------------\n\n");
     printf("Following command format should be used to run the editor:\n\n");
@@ -43,35 +44,37 @@ void help() {
     printf("--vignette: Apply Vignette\n");
     printf("\n");
     printf("-------------------------------------------\n\n");
-
 }
 
-char* find_argument(char* arg, bool raise)
+char *find_argument(char *arg, bool raise)
 {
+
     int index = 0;
 
-    for (int i=0;i<ARGC;i++)
+    for (int i = 0; i < ARGC; i++)
     {
-        if (strcmp(arg, ARGV[i]) == 0) index=++i;
-
+        if (strcmp(arg, ARGV[i]) == 0)
+            index = ++i;
     }
-    if (index==0 && raise)
+
+    if (index == 0 && raise)
     {
         help();
 
         char formatted_string[100];
         sprintf(formatted_string, "Please provide %s argument", arg);
         raise_error(formatted_string);
-
     }
-
-    else if (index==0) {
+    else if (index == 0)
+    {
         return NULL;
     }
-    if (index > ARGC) return DEFAULT_VALUE;
+    if (index > ARGC)
+        return DEFAULT_VALUE;
+    if (index == ARGC)
+        return ARGV[index - 1];
     return ARGV[index];
 }
-
 
 void parse_args(int argc, char *argv[])
 {
@@ -84,172 +87,201 @@ void parse_args(int argc, char *argv[])
     ARGV = argv;
     ARGC = argc;
 
+    if (find_argument("-h", false))
+        help();
 
-    if (find_argument("-h", false)) help();
+    char *input_path = find_argument("-i", true);
 
+    if (input_path)
+        image = open_image(input_path);
 
+    if (find_argument("-g", false))
+        grayscale(image);
 
-    char* input_path = find_argument("-i", true);
-
-    if (input_path) image = open_image(input_path);
-
-    if (find_argument("-g", false)) grayscale(image);
-
-    char* contrast_val = find_argument("-c", false);
+    char *contrast_val = find_argument("-c", false);
     if (contrast_val)
     {
-        float factor = (float) atof(contrast_val);
+        float factor = (float)atof(contrast_val);
         output = contrast(image, factor);
     };
 
-    char* brightness_ratio = find_argument("-b", false);
+    char *brightness_ratio = find_argument("-b", false);
     if (brightness_ratio)
     {
-        float ratio = (float) atof(brightness_ratio);
+        float ratio = (float)atof(brightness_ratio);
         brightness(image, ratio);
     }
 
-    char* gauss= find_argument("--gaussian", false);
+    char *gauss = find_argument("--gaussian", false);
     if (gauss)
     {
 
-        int kernel_size = (int) atof(find_argument("--kernel-size", true));
-        float sigma = (float) atof(find_argument("--sigma", true));
+        int kernel_size = (int)atof(find_argument("--kernel-size", true));
+        float sigma = (float)atof(find_argument("--sigma", true));
 
         output = gaussian(image, kernel_size, sigma);
-
     }
 
-    char* dimensions = find_argument("-r", false);
+    char *dimensions = find_argument("-r", false);
     if (dimensions)
     {
-        char* size[2];
+        char *size[2];
         split_args(dimensions, size, 'x');
 
-        int width = (int) atof(size[0]);
-        int height = (int) atof(size[1]);
+        int width = (int)atof(size[0]);
+        int height = (int)atof(size[1]);
         output = resize(image, width, height);
     }
 
-    if (find_argument("--histogram", false))  histogram(image);
+    if (find_argument("--histogram", false))
+    {
+        ColorMode red = {
+            .name = "red",
+            .value = "31",
+            .min = 1000000,
+            .max = 0,
+            .histogram = {0}};
+        ColorMode green = {
+            .name = "green",
+            .value = "32",
+            .min = 1000000,
+            .max = 0,
+            .histogram = {0}};
+        ColorMode blue = {
+            .name = "blue",
+            .value = "34",
+            .min = 1000000,
+            .max = 0,
+            .histogram = {0}};
+        histogram(image, &red, &green, &blue, 25);
+        print_table(&red, &green, &blue);
+    }
 
     if (find_argument("-f", false))
     {
-        float strength = (float) atof(find_argument("--strength", true));
-        char* color = find_argument("--color", true);
+        float strength = (float)atof(find_argument("--strength", true));
+        char *color = find_argument("--color", true);
 
         output = filter(image, color, strength);
     }
 
-    char* factor = find_argument("--opacity", false);
-    if(factor) output = opacity(image, (float) atof(factor));
+    char *factor = find_argument("--opacity", false);
+    if (factor)
+        output = opacity(image, (float)atof(factor));
 
-    char* layer = find_argument("-l", false);
+    char *layer = find_argument("-l", false);
     if (layer)
     {
-        char* path = find_argument("--path", true);
-        char* position = find_argument("--pos", true);
-        int alpha = (int) atof(find_argument("--alpha-mask", true));
+        char *path = find_argument("--path", true);
+        char *position = find_argument("--pos", true);
+        int alpha = (int)atof(find_argument("--alpha-mask", true));
 
-        char* size[2];
+        char *size[2];
         split_args(position, size, 'x');
 
-        int x = (int) atof(size[0]);
-        int y = (int) atof(size[1]);
+        int x = (int)atof(size[0]);
+        int y = (int)atof(size[1]);
 
         Image patch = open_image(path);
 
         output = add_layer(image, patch, x, y, alpha);
-
-
     }
 
     if (find_argument("--crop", false))
     {
 
         int left;
-        char* left_value = find_argument("--left", false);
-        if(!left_value) left = 0; else left = (int) atof(left_value);
+        char *left_value = find_argument("--left", false);
+        if (!left_value)
+            left = 0;
+        else
+            left = (int)atof(left_value);
 
         int right;
-        char* right_value = find_argument("--right", false);
-        if(!right_value) right = 0; else right = (int) atof(right_value);
+        char *right_value = find_argument("--right", false);
+        if (!right_value)
+            right = 0;
+        else
+            right = (int)atof(right_value);
 
         int top;
-        char* top_value = find_argument("--top", false);
-        if(!top_value) top = 0; else top = (int) atof(top_value);
+        char *top_value = find_argument("--top", false);
+        if (!top_value)
+            top = 0;
+        else
+            top = (int)atof(top_value);
 
         int bottom;
-        char* bottom_value = find_argument("--bottom", false);
-        if(!bottom_value) bottom = 0; else bottom = (int) atof(bottom_value);
-
+        char *bottom_value = find_argument("--bottom", false);
+        if (!bottom_value)
+            bottom = 0;
+        else
+            bottom = (int)atof(bottom_value);
 
         output = crop(image, left, right, top, bottom);
     }
 
-    char* rotate = find_argument("--rotate", false);
+    char *rotate = find_argument("--rotate", false);
     if (rotate)
     {
         double angle = atof(rotate);
         output = rotate_image(image, angle);
     }
 
+    if (find_argument("--invert", false))
+        output = invert(image);
 
-    if (find_argument("--invert", false)) output = invert(image);
-
-    char* border = find_argument("--border", false);
+    char *border = find_argument("--border", false);
     if (border)
     {
 
-        char* color = find_argument("--color", true);
-        int border_size = (int) atof(border);
+        char *color = find_argument("--color", true);
+        int border_size = (int)atof(border);
         output = add_border(image, color, border_size);
     }
 
-    char* mask_opt = find_argument("--mask", false);
+    char *mask_opt = find_argument("--mask", false);
     if (mask_opt)
     {
-        char* color = find_argument("--color", true);
-        float threshold = (float) atof(find_argument("--threshold", true));
+        char *color = find_argument("--color", true);
+        float threshold = (float)atof(find_argument("--threshold", true));
         output = mask(image, color, threshold);
-
     }
 
-    char* edge_detection = find_argument("--edge", false);
+    char *edge_detection = find_argument("--edge", false);
     if (edge_detection)
     {
         find_argument("--threshold", true);
-        int low = (int) atof(find_argument("--low", true));
-        int high = (int) atof(find_argument("--high", true));
+        int low = (int)atof(find_argument("--low", true));
+        int high = (int)atof(find_argument("--high", true));
         output = edge(image, high, low);
     }
 
-    char* template = find_argument("--template", false);
+    char *template = find_argument("--template", false);
     if (template)
     {
         Image template_img = open_image(template);
-        float threshold = (float) atof(find_argument("--threshold", true));
+        float threshold = (float)atof(find_argument("--threshold", true));
 
         match_template(image, template_img, threshold);
-
     }
 
     char *color_val = find_argument("--check-color", false);
     if (color_val)
     {
-        float threshold = (float) atof(find_argument("--threshold", true));
+        float threshold = (float)atof(find_argument("--threshold", true));
         check_color(image, color_val, threshold);
     }
     char *ratio_text = find_argument("--vignette", false);
     if (ratio_text)
     {
-        float ratio = (float) atof(ratio_text);
+        float ratio = (float)atof(ratio_text);
         vignette(image, ratio);
     }
 
-
     OUTPUT_PATH = find_argument("-o", false);
-    if (!output.name) output = image;
-    if (OUTPUT_PATH) save_image(OUTPUT_PATH, output);
-
+    if (!output.name)
+        output = image;
+    if (OUTPUT_PATH)
+        save_image(OUTPUT_PATH, output);
 }

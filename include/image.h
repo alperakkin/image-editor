@@ -4,7 +4,7 @@
 #include "utils.h"
 
 
-#define HISTOGRAM_LENGTH 25
+#define HISTOGRAM_LENGTH 255
 
 
 typedef struct {
