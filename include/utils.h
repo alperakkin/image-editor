@@ -3,8 +3,8 @@
 #include <string.h>
 #include <stdio.h>
 
-void split_args(char* expression, char** factors, char separator);
+void split_args(char *expression, char **factors, char separator);
 
-void raise_error(char* message);
+void raise_error(char *message);
 
-int** alloc_matrix(int width, int height);
+int **alloc_matrix(int width, int height);

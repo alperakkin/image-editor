@@ -13,7 +13,7 @@ Image brightness(Image image, float ratio);
 Image gaussian(Image image, int kernel_size, float sigma);
 Image resize(Image image, int width, int height);
 void histogram(Image image, ColorMode *red, ColorMode *green, ColorMode *blue, int bin_size);
-Image filter(Image image, char *color, float strength);
+Image filter(Image image, char *color, float opacity);
 Image opacity(Image image, float factor);
 Image add_layer(Image image, Image patch, int pos_x, int pos_y, int alpha);
 Image crop(Image image, int left, int right, int top, int bottom);

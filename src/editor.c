@@ -157,15 +157,15 @@ void histogram(Image image, ColorMode *red, ColorMode *green, ColorMode *blue, i
     }
 }
 
-Image filter(Image image, char *color, float strength)
+Image filter(Image image, char *color, float opacity)
 {
 
     char *hex_code = color;
 
     Color RGB_color = hex_to_rgb(hex_code);
 
-    if (strength > 1.0)
-        strength = 1.0;
+    if (opacity > 1.0)
+        opacity = 1.0;
 
     for (int y = 0; y < image.height; y++)
     {
@@ -174,9 +174,9 @@ Image filter(Image image, char *color, float strength)
         {
             png_bytep px = &(row[x * 4]);
 
-            px[0] = (int)(strength * RGB_color.R + (1 - strength) * px[0]);
-            px[1] = (int)(strength * RGB_color.G + (1 - strength) * px[1]);
-            px[2] = (int)(strength * RGB_color.B + (1 - strength) * px[2]);
+            px[0] = (int)(opacity * RGB_color.R + (1 - opacity) * px[0]);
+            px[1] = (int)(opacity * RGB_color.G + (1 - opacity) * px[1]);
+            px[2] = (int)(opacity * RGB_color.B + (1 - opacity) * px[2]);
         }
     }
 
