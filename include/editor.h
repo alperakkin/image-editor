@@ -23,5 +23,5 @@ Image add_border(Image image, char *color, int size);
 Image mask(Image image, char *color, float threshold);
 Image edge(Image image, int high_threshold, int low_threshold);
 void match_template(Image image, Image template, float threshold);
-void check_color(Image image, char *color, float threshold);
+float check_color(Image image, char *color, float threshold);
 Image vignette(Image image, float ratio);

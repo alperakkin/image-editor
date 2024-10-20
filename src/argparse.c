@@ -270,7 +270,8 @@ void parse_args(int argc, char *argv[])
     if (color_val)
     {
         float threshold = (float)atof(find_argument("--threshold", true));
-        check_color(image, color_val, threshold);
+        float ratio = check_color(image, color_val, threshold);
+        printf("[Color: %s Fill Ratio: %f %%]\n", color_val, ratio * 10);
     }
     char *ratio_text = find_argument("--vignette", false);
     if (ratio_text)

@@ -461,7 +461,7 @@ void match_template(Image image, Image template, float threshold)
     }
 }
 
-void check_color(Image image, char *color, float threshold)
+float check_color(Image image, char *color, float threshold)
 {
 
     Color color_rgb = hex_to_rgb(color);
@@ -491,7 +491,7 @@ void check_color(Image image, char *color, float threshold)
     }
     float ratio = (float)total_matches / (float)(image.width * image.height);
 
-    printf("[Color: %s Fill Ratio: %f %%]\n", color, ratio * 10);
+    return ratio;
 }
 
 Image vignette(Image image, float ratio)
