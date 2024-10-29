@@ -529,3 +529,66 @@ void print_table(ColorMode *red, ColorMode *green, ColorMode *blue)
     print_x_axis(red, green, blue);
     printf("\n\n\n");
 }
+
+Image skew_horizontal(Image image, int org_w, int org_h, double kx)
+{
+    int new_width = (int)(image.width + org_h * fabs(kx) * 1.1);
+    int new_height = image.height;
+    Image rotated = alloc_image(new_width, new_height);
+
+    for (int y = 0; y < image.height; y++)
+    {
+        png_bytep row_original = image.pixels[y];
+        for (int x = 0; x < image.width; x++)
+        {
+
+            int new_x = round(x + (int)(y * kx));
+            new_x -= (int)image.height * kx;
+            int new_y = y;
+
+            if (new_x >= 0 && new_x < new_width && new_y >= 0 && new_y < new_height)
+            {
+                png_bytep px_original = &(row_original[x * 4]);
+                png_bytep px_rotated = &(rotated.pixels[new_y][new_x * 4]);
+                px_rotated[0] = px_original[0];
+                px_rotated[1] = px_original[1];
+                px_rotated[2] = px_original[2];
+                px_rotated[3] = px_original[3];
+            }
+        }
+    }
+    return rotated;
+}
+
+Image skew_vertical(Image image, int org_w, int org_h, double ky)
+{
+    int new_width = image.width;
+    int new_height = (int)(image.height + org_w * fabs(ky) * 1.5);
+    Image rotated = alloc_image(new_width, new_height);
+
+    for (int y = 0; y < image.height; y++)
+    {
+
+        png_bytep row_original = image.pixels[y];
+
+        for (int x = 0; x < image.width; x++)
+        {
+
+            int new_y = round(y + (int)(x * ky));
+            new_y -= (int)image.width * ky / 8;
+
+            int new_x = x;
+
+            if (new_x >= 0 && new_x < new_width && new_y >= 0 && new_y < new_height)
+            {
+                png_bytep px_original = &(row_original[x * 4]);
+                png_bytep px_rotated = &(rotated.pixels[new_y][new_x * 4]);
+                px_rotated[0] = px_original[0];
+                px_rotated[1] = px_original[1];
+                px_rotated[2] = px_original[2];
+                px_rotated[3] = px_original[3];
+            }
+        }
+    }
+    return rotated;
+}
