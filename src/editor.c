@@ -265,60 +265,143 @@ Image crop(Image image, int left, int right, int top, int bottom)
     return cropped;
 }
 
-Image rotate_image(Image image, double angle)
+Image skew_horizontal(Image image, double kx)
 {
-
-    double radians = angle * M_PI / 180;
-    double cos_value = cos(radians);
-    double sin_value = sin(radians);
-    int width = image.width;
-    int height = image.height;
-    const int SCALE = 4;
-
-    image = resize(image, image.width * SCALE, image.height * SCALE);
-
-    int new_width = (int)(fabs(image.width * cos_value) + fabs(image.height * sin_value));
-    int new_height = (int)(fabs(image.width * sin_value) + fabs(image.height * cos_value));
-
+    int new_width = (int)(image.width + image.height * fabs(kx));
+    int new_height = image.height;
     Image rotated = alloc_image(new_width, new_height);
-
-    int x0 = (int)image.width / 2;
-    int y0 = (int)image.height / 2;
-
-    int new_x0 = new_width / 2;
-    int new_y0 = new_height / 2;
 
     for (int y = 0; y < image.height; y++)
     {
-        png_bytep row = image.pixels[y];
+        png_bytep row_original = image.pixels[y];
+        for (int x = 0; x < image.width; x++)
+        {
+
+            int new_x = round(x + (int)(y * kx));
+            new_x -= image.height * kx;
+            int new_y = y;
+
+            if (new_x >= 0 && new_x < new_width && new_y >= 0 && new_y < new_height)
+            {
+                png_bytep px_original = &(row_original[x * 4]);
+                png_bytep px_rotated = &(rotated.pixels[new_y][new_x * 4]);
+                px_rotated[0] = px_original[0];
+                px_rotated[1] = px_original[1];
+                px_rotated[2] = px_original[2];
+                px_rotated[3] = px_original[3];
+            }
+        }
+    }
+    return rotated;
+}
+
+Image skew_vertical(Image image, double ky)
+{
+    int new_width = image.width;
+    int new_height = (int)(image.height + image.width * fabs(ky));
+    Image rotated = alloc_image(new_width, new_height);
+    int center_original_x = image.width / 2;
+    int center_original_y = image.height / 2;
+    int center_new_x = new_width / 2;
+    int center_new_y = new_height / 2;
+
+    for (int y = 0; y < image.height; y++)
+    {
+
+        png_bytep row_original = image.pixels[y];
 
         for (int x = 0; x < image.width; x++)
         {
-            int new_x = (int)(new_x0 + (x - x0) * cos_value + (y - y0) * sin_value);
-            int new_y = (int)(new_y0 - (x - x0) * sin_value + (y - y0) * cos_value);
 
-            if (new_x < 0 || new_x >= new_width || new_y < 0 || new_y >= new_height)
-                continue;
+            int new_y = round(y + (int)(x * ky));
+            new_y -= image.width * ky / 8;
 
-            png_bytep rotated_row = rotated.pixels[new_y];
-            png_bytep px = &(row[x * 4]);
-            png_bytep rotated_px = &(rotated_row[new_x * 4]);
+            int new_x = x;
 
-            rotated_px[0] = px[0];
-            rotated_px[1] = px[1];
-            rotated_px[2] = px[2];
-            rotated_px[3] = px[3];
+            if (new_x >= 0 && new_x < new_width && new_y >= 0 && new_y < new_height)
+            {
+                png_bytep px_original = &(row_original[x * 4]);
+                png_bytep px_rotated = &(rotated.pixels[new_y][new_x * 4]);
+                px_rotated[0] = px_original[0];
+                px_rotated[1] = px_original[1];
+                px_rotated[2] = px_original[2];
+                px_rotated[3] = px_original[3];
+            }
         }
     }
-
-    rotated = bilinear_interpolation(rotated);
-    int kernel_size = 6;
-    float sigma = 1.8;
-    rotated = gaussian(rotated, kernel_size, sigma);
-    rotated = resize(rotated, width, height);
-
     return rotated;
 }
+
+Image rotate_image(Image image, double angle)
+{
+    double radians = angle * M_PI / 180.0;
+    double kx = -tan(radians / 2.0);
+    double ky = sin(radians);
+
+    Image skewed = skew_horizontal(image, kx);
+    skewed = skew_vertical(skewed, ky);
+    skewed = skew_horizontal(skewed, kx);
+
+    // free_image(rotated_image);
+    // free_image(image);
+
+    return skewed;
+}
+
+// Image rotate_image(Image image, double angle)
+// {
+
+//     double radians = angle * M_PI / 180;
+//     double cos_value = cos(radians);
+//     double sin_value = sin(radians);
+//     int width = image.width;
+//     int height = image.height;
+//     const int SCALE = 4;
+
+//     image = resize(image, image.width * SCALE, image.height * SCALE);
+
+//     int new_width = (int)(fabs(image.width * cos_value) + fabs(image.height * sin_value));
+//     int new_height = (int)(fabs(image.width * sin_value) + fabs(image.height * cos_value));
+
+//     Image rotated = alloc_image(new_width, new_height);
+
+//     int x0 = (int)image.width / 2;
+//     int y0 = (int)image.height / 2;
+
+//     int new_x0 = new_width / 2;
+//     int new_y0 = new_height / 2;
+
+//     for (int y = 0; y < image.height; y++)
+//     {
+//         png_bytep row = image.pixels[y];
+
+//         for (int x = 0; x < image.width; x++)
+//         {
+//             int new_x = (int)(new_x0 + (x - x0) * cos_value + (y - y0) * sin_value);
+//             int new_y = (int)(new_y0 - (x - x0) * sin_value + (y - y0) * cos_value);
+
+//             if (new_x < 0 || new_x >= new_width || new_y < 0 || new_y >= new_height)
+//                 continue;
+
+//             png_bytep rotated_row = rotated.pixels[new_y];
+//             png_bytep px = &(row[x * 4]);
+//             png_bytep rotated_px = &(rotated_row[new_x * 4]);
+
+//             rotated_px[0] = px[0];
+//             rotated_px[1] = px[1];
+//             rotated_px[2] = px[2];
+//             rotated_px[3] = px[3];
+//         }
+//     }
+
+//     rotated = bilinear_interpolation(rotated);
+//     int kernel_size = 6;
+//     float sigma = 1.8;
+//     rotated = gaussian(rotated, kernel_size, sigma);
+//     rotated = resize(rotated, width, height);
+
+//     return rotated;
+// }
 
 Image invert(Image image)
 {
