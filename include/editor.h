@@ -25,3 +25,4 @@ Image edge(Image image, int high_threshold, int low_threshold);
 void match_template(Image image, Image template, float threshold);
 float check_color(Image image, char *color, float threshold);
 Image vignette(Image image, float ratio);
+Image trim(Image image);
